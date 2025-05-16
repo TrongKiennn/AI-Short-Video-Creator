@@ -42,7 +42,7 @@ Lệnh này sẽ tạo ra một **Admin Key** dùng để đăng nhập hệ th�
 
 ## 🛠️ 6. Cập nhật khóa ADMIN_KEY
 
-Mở lại file `.env` và:
+Mở lại file `.env.local` và:
 
 - Tìm dòng `ADMIN_KEY=...`
 - Thay thế bằng giá trị key vừa được tạo ở bước trước.
