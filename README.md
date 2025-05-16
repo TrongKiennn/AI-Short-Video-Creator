@@ -52,7 +52,7 @@ Chạy hai lệnh sau trong terminal:
 
 ```bash
 npm install convex@latest
-npm install
+npx convex dev
 ```
 
 > 💡 **Lưu ý:** `convex@latest` đảm bảo bạn luôn sử dụng phiên bản mới nhất của thư viện.
