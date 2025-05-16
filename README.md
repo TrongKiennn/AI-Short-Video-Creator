@@ -27,7 +27,7 @@ docker compose up
 
 ## 📝 4. Cấu hình biến môi trường
 
-Mở file `.env` và chỉnh sửa các giá trị theo yêu cầu.  
+Mở file `.env.local` và chỉnh sửa các giá trị theo yêu cầu.  
 **Lưu ý:** Sau này bạn sẽ cần cập nhật `ADMIN_KEY` trong file này sau khi khởi tạo.
 
 ## 🔑 5. Tạo khóa quản trị viên (Admin Key)
