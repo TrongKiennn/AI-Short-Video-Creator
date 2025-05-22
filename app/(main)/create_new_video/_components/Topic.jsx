@@ -66,7 +66,7 @@ function Topic({ onHandleInputChange }) {
                 <Button
                   variant="outline"
                   key={index}
-                  className={`m-1${suggestion === selectedTopic ? " bg-secondary" : ""}`}
+                  className={`m-1${selectedTopic === suggestion ? " bg-secondary" : ""}`}
                   onClick={() => {
                     setSelectedTopic(suggestion);
                     onHandleInputChange("topic", suggestion);
