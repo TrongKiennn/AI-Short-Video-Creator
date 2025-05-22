@@ -56,11 +56,13 @@ function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <div className='mx-5 mt-10'>
+              <Link href={'/create_new_video'}>
               <Button className="w-full">+ Create New Video</Button>
+              </Link>
             </div>
             <SidebarMenu>
               {MenuItems.map((menu,index)=>(
-                <SidebarMenuItem className="mt-3">
+                <SidebarMenuItem className="mt-3" key={index}>
                   <SidebarMenuButton className="p-5">
                     <Link href={menu.url} className='flex items-center gap-4 p-3'>
                       <menu.icon/>
