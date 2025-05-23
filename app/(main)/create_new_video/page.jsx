@@ -10,7 +10,7 @@ function CreateNewVideo() {
   };
 
   useEffect(() => {
-    console.log("Form Data", fromData);
+    console.log("fromData updated:", fromData);
   }, [fromData]);
 
   return (

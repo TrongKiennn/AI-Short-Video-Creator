@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { SparkleIcon, Loader2Icon } from "lucide-react";
@@ -26,11 +26,14 @@ const suggestions = [
 
 function Topic({ onHandleInputChange }) {
   const [selectedTopic, setSelectedTopic] = useState();
+  const [selectedScriptIndex, setSelectedScriptIndex] = useState();
   const [scripts, setScript] = useState();
   const [loading, setLoading] = useState(false);
 
   const GenerateScript = async () => {
     setLoading(true);
+    setSelectedTopic(null);
+    setSelectedScriptIndex(null);
     try {
       const result = await axios.post("/api/generate_script", {
         topic: selectedTopic,
@@ -43,6 +46,10 @@ function Topic({ onHandleInputChange }) {
 
     setLoading(false);
   };
+
+  useEffect(() => {
+    console.log("selectedTopic updated:", selectedTopic);
+  }, [selectedTopic]);
 
   return (
     <div>
@@ -66,11 +73,11 @@ function Topic({ onHandleInputChange }) {
                 <Button
                   variant="outline"
                   key={index}
-                  className={`m-1${selectedTopic === suggestion ? " bg-secondary" : ""}`}
                   onClick={() => {
                     setSelectedTopic(suggestion);
                     onHandleInputChange("topic", suggestion);
                   }}
+                  className={`m-1 ${selectedTopic == suggestion && "bg-secondary"}`}
                 >
                   {suggestion}
                 </Button>
@@ -94,10 +101,17 @@ function Topic({ onHandleInputChange }) {
           <div>
             <div className="grid grid-cols-2 gap-5">
               {scripts.map((item, index) => (
-                <div key={index} className="p-3 border rounded-lg mt-3">
-                  <h2 className="line-clamp-4 text-sm text-gray-300">
-                    {item.content}
-                  </h2>
+                <div
+                  key={index}
+                  className={`p-3 border rounded-lg mt-3 cursor-pointer
+                  ${selectedScriptIndex == index && "border-white bg-secondary"}
+                `}
+                  onClick={() => {
+                    console.log("Selected index:", index);
+                    setSelectedScriptIndex(index);
+                  }}
+                >
+                  <h2 className="text-sm text-gray-300">{item.content}</h2>
                 </div>
               ))}
             </div>
