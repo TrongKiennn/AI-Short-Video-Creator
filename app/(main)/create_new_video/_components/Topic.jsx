@@ -48,7 +48,7 @@ function Topic({ onHandleInputChange }) {
   };
 
   useEffect(() => {
-    console.log("selectedTopic updated:", selectedTopic);
+    
   }, [selectedTopic]);
 
   return (
