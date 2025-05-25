@@ -48,8 +48,8 @@ function Topic({ onHandleInputChange }) {
   };
 
   useEffect(() => {
-
-  }, [selectTopic]);
+    
+  }, [selectedTopic]);
 
   return (
     <div>
