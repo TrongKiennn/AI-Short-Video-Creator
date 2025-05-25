@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Topic from "./_components/Topic";
+import VideoStyle from "./_components/VideoStyle";
 
 function CreateNewVideo() {
   const [fromData, setFromData] = useState();
@@ -21,6 +22,7 @@ function CreateNewVideo() {
           {/* Topic and script */}
           <Topic onHandleInputChange={onHandleInputChange} />
           {/* Video image style */}
+          <VideoStyle onHandleInputChange={onHandleInputChange}/>
           {/* Voice */}
           {/* Captions */}
         </div>

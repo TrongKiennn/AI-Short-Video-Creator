@@ -25,18 +25,18 @@ const suggestions = [
 ];
 
 function Topic({ onHandleInputChange }) {
-  const [selectedTopic, setSelectedTopic] = useState();
+  const [selectTopic, setselectTopic] = useState();
   const [selectedScriptIndex, setSelectedScriptIndex] = useState();
   const [scripts, setScript] = useState();
   const [loading, setLoading] = useState(false);
 
   const GenerateScript = async () => {
     setLoading(true);
-    setSelectedTopic(null);
+    setselectTopic(null);
     setSelectedScriptIndex(null);
     try {
       const result = await axios.post("/api/generate_script", {
-        topic: selectedTopic,
+        topic: selectTopic,
       });
       console.log(result.data);
       setScript(result.data?.scripts);
@@ -48,8 +48,8 @@ function Topic({ onHandleInputChange }) {
   };
 
   useEffect(() => {
-    console.log("selectedTopic updated:", selectedTopic);
-  }, [selectedTopic]);
+
+  }, [selectTopic]);
 
   return (
     <div>
@@ -73,11 +73,15 @@ function Topic({ onHandleInputChange }) {
                 <Button
                   variant="outline"
                   key={index}
+                  
                   onClick={() => {
-                    setSelectedTopic(suggestion);
+                 
+                    setselectTopic(suggestion);
                     onHandleInputChange("topic", suggestion);
+                    console.log(selectTopic)
+                    console.log(suggestion)
                   }}
-                  className={`m-1 ${selectedTopic == suggestion && "bg-secondary"}`}
+                  className={`m-1 ${suggestion === selectTopic && 'bg-secondary text-white !bg-secondary' }` }
                 >
                   {suggestion}
                 </Button>
