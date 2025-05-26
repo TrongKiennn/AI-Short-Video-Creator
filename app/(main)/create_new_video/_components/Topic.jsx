@@ -25,7 +25,7 @@ const suggestions = [
 ];
 
 function Topic({ onHandleInputChange }) {
-  const [selectTopic, setselectTopic] = useState();
+  const [selectedTopic, setselectTopic] = useState();
   const [selectedScriptIndex, setSelectedScriptIndex] = useState();
   const [scripts, setScript] = useState();
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ function Topic({ onHandleInputChange }) {
     setSelectedScriptIndex(null);
     try {
       const result = await axios.post("/api/generate_script", {
-        topic: selectTopic,
+        topic: selectedTopic,
       });
       console.log(result.data);
       setScript(result.data?.scripts);
@@ -78,10 +78,10 @@ function Topic({ onHandleInputChange }) {
                  
                     setselectTopic(suggestion);
                     onHandleInputChange("topic", suggestion);
-                    console.log(selectTopic)
+                    console.log(selectedTopic)
                     console.log(suggestion)
                   }}
-                  className={`m-1 ${suggestion === selectTopic && 'bg-secondary text-white !bg-secondary' }` }
+                  className={`m-1 ${suggestion === selectedTopic && 'bg-secondary text-white !bg-secondary' }` }
                 >
                   {suggestion}
                 </Button>
@@ -112,6 +112,7 @@ function Topic({ onHandleInputChange }) {
                 `}
                   onClick={() => {
                     console.log("Selected index:", index);
+                    onHandleInputChange('script',item.content)
                     setSelectedScriptIndex(index);
                   }}
                 >

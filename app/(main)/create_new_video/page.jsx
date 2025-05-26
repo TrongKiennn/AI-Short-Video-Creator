@@ -5,19 +5,61 @@ import VideoStyle from "./_components/VideoStyle";
 import Voice from "./_components/Voice";
 import Captions from "./_components/Captions";
 import Preview from "./_components/Preview";
-import { WandSparkles } from "lucide-react";
+import { Loader2Icon, WandSparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useAuthContext } from "@/app/provider";
+
 
 function CreateNewVideo() {
-  const [fromData, setFromData] = useState();
-
+  const [formData, setFormFata] = useState();
+  const CreateInitialVideoRecord=useMutation(api.videoData.CreateVideoData);
+  const {user}=useAuthContext();
+  const [loading,setLoading]=useState(false);
+  console.log("User ne",user);
   const onHandleInputChange = (fieldName, FieldValue) => {
-    setFromData((prev) => ({ ...prev, [fieldName]: FieldValue }));
+    setFormFata((prev) => ({ ...prev, [fieldName]: FieldValue }));
   };
+  const GenerateVideo =async()=>{
+    if (
+    !formData?.topic ||
+    !formData?.script ||
+    !formData.videoStyle ||
+    !formData.caption ||
+    !formData.voice
+  ){
+      console.log("ERROR","Enter All Field");
+      return;
+    }
 
+    setLoading(true);
+
+    const resp=await CreateInitialVideoRecord({
+      title:formData.title,
+      topic:formData.topic,
+      script:formData.script,
+      videoStyle:formData.videoStyle,
+      caption:formData.caption.name,
+      voice:formData.voice,
+      uid:user?._id,
+      createdBy:user?.email
+    });
+
+    // console.log(resp);
+
+    const result=await axios.post('/api/generate_video_data',{
+      ...formData
+    })
+
+
+    // console.log(result);
+    setLoading(false);
+  }
   useEffect(() => {
-    console.log("fromData updated:", fromData);
-  }, [fromData]);
+    console.log("formData updated:", formData);
+  }, [formData]);
 
   return (
     <div>
@@ -32,10 +74,13 @@ function CreateNewVideo() {
           <Voice onHandleInputChange={onHandleInputChange} />
           {/* Captions */}
           <Captions onHandleInputChange={onHandleInputChange}/>
-          <Button className="w-full mt-5"><WandSparkles/>Generate Video</Button>
+          <Button className="w-full mt-5"
+          disabled={loading}
+          onClick={GenerateVideo}
+          > {loading?<Loader2Icon className="animate-spin"/>:<WandSparkles/>}Generate Video</Button>
         </div>
         <div>
-          <Preview fromData={fromData}/>
+          <Preview formData={formData}/>
         </div>
       </div>
     </div>

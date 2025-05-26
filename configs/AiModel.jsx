@@ -30,3 +30,62 @@ export const generateScript = {
     return { text };
   }
 };
+
+export const generateImageScript = model.startChat({
+  generationConfig,
+  history:[
+    {
+      role:"user",
+      parts: [
+        {text:"Generate Image prompt of {style} style with all deatils for each scene for 1 minute video : script: {script} Just Give specifing image prompt depends on the story line do not give camera angle image prompt Follow the following schema and return JSON data (Max 8-10 Images) [ { imagePrompt:'', sceneContent: ' <Script Content>'}]"},
+      ],
+      
+    },
+    {
+      role: "model",
+      parts: [
+        {
+          text: `I am sorry, I cannot generate images directly. The capability to generate images is only enabled for the "Gemini 2.0 Flash Experimental" model when the selected output format is "Images and text". However, I can provide you with image prompts based on your script in a JSON format as requested.
+
+\`\`\`json
+[
+  {
+    "imagePrompt": "Close-up of a weathered hand holding a worn leather-bound book, dust motes dancing in the sunlight. Ancient symbols etched into the cover are barely visible.",
+    "sceneContent": "<Script Content: Establishing shot. Focus on the ancient book.>"
+  },
+  {
+    "imagePrompt": "A bustling marketplace filled with colorful stalls, exotic spices, and diverse people. Merchants hawk their wares, and children chase pigeons through the crowd.",
+    "sceneContent": "<Script Content: Market scene. Introduce the vibrant world.>"
+  },
+  {
+    "imagePrompt": "A mysterious figure cloaked in shadows standing at the edge of the marketplace, observing the protagonist with piercing eyes. A sense of danger and intrigue fills the air.",
+    "sceneContent": "<Script Content: Introduction of the antagonist. Ominous presence.>"
+  },
+  {
+    "imagePrompt": "The protagonist engrossed in reading the ancient book by candlelight in a dimly lit study. Maps and scrolls surround them, hinting at a grand quest.",
+    "sceneContent": "<Script Content: Protagonist's research. Focus on the book's importance.>"
+  },
+  {
+    "imagePrompt": "A perilous journey through a dense, ancient forest. Sunlight filters through the canopy, illuminating the path ahead. The protagonist faces unknown dangers.",
+    "sceneContent": "<Script Content: The journey begins. Facing challenges in the forest.>"
+  },
+  {
+    "imagePrompt": "A hidden chamber within a crumbling temple. Walls adorned with hieroglyphs, and a single beam of light illuminating a golden artifact. ",
+    "sceneContent": "<Script Content: Discovery of the artifact. Climax of the scene.>"
+  },
+  {
+    "imagePrompt": "The antagonist confronts the protagonist in the chamber, a battle of wits and power ensues. Sparks fly as their destinies collide.",
+    "sceneContent": "<Script Content: Confrontation with the antagonist. High-stakes battle.>"
+  },
+  {
+    "imagePrompt": "The protagonist emerges victorious from the temple, holding the artifact aloft. A new chapter dawns as they embrace their destiny.",
+    "sceneContent": "<Script Content: Resolution. The protagonist's victory and future.>"
+  }
+]
+\`\`\`
+`,
+},
+      ],
+    },
+  ],
+});
