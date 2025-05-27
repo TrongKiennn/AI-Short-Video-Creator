@@ -1,5 +1,8 @@
 import { generateImageScript } from "@/configs/AiModel";
 import { inngest } from "./client";
+import axios from "axios";
+
+const BASE_URL='https://aigurulab.tech';
 
 const ImagePromptScript=`Generate Image prompt of {style} style with all deatils for each scene for 1 minute video : script: {script}
 - Just Give specifing image prompt depends on the story line
@@ -30,19 +33,59 @@ export const GenerateVideoData=inngest.createFunction(
     //Generate Caption
 
     //Generate Images prompt from script
-    const GenerateImagePrompts=await step.run(
+    const GenerateImagePrompts = await step.run(
       "generateImagePrompt",
-      async()=>{
-        const FINAL_PROMPT=ImagePromptScript
-        .replace('{style}',videoStyle).replace('{script',script);
-        const result=await generateImageScript.sendMessage(FINAL_PROMPT);
-        const resp=JSON.parse(result.response.text());
-        return resp;
+      async () => {
+        const FINAL_PROMPT = ImagePromptScript
+          .replace('{style}', videoStyle)
+          .replace('{script}', script);
+
+        const result = await generateImageScript.sendMessage(FINAL_PROMPT);
+        console.log(result.text);
+
+        try {
+
+          const parsed = JSON.parse(result.text);
+          return parsed;
+        } catch (e) {
+          return {
+            error: "Failed to parse AI response as JSON.",
+            rawResponse: result.text,
+          };
+        }
       }
-    )
+    );
     //Generate Images using AI
 
-    //Save all Data to DB
+    const GenerateImages = await step.run(
+      "generateImages",
+      async()=>{
+        let images=[];
+        images=await Promise.all(
+          GenerateImagePrompts.map(async(elenment)=>{
+            const result = await axios.post(BASE_URL+'/api/generate-image',
+            {
+                width: 1024,
+                height: 1024,
+                input: elenment?.imagePrompt,
+                model: 'sdxl',//'flux'
+                aspectRatio:"1:1"//Applicable to Flux model only
+            },
+            {
+                headers: {
+                    'x-api-key': process.env.NEXT_PUBLIC_AIGURULAB_API_KEY, // Your API Key
+                    'Content-Type': 'application/json', // Content Type
+                },
+            })
+            console.log(result.data.image) //Output Result: Base 64 Image
+            return result.data.image;
+          })
+        )
+        return images;
+      }
+    );
 
+    //Save all Data to DB
+    return GenerateImages
   }
 )
