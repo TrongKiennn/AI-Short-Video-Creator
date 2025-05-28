@@ -1,27 +1,27 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Input } from "@/components/ui/input";
-import { SparkleIcon, Loader2Icon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+'use client';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Input } from '@/components/ui/input';
+import { SparkleIcon, Loader2Icon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 
 const suggestions = [
-  "Historic Story",
-  "Kids Story",
-  "Motivational Story",
-  "Funny Story",
-  "AI Innovation",
-  "AI in Education",
-  "Horror Story",
-  "Tech Brreakthrough",
-  "AI in Healthcare",
-  "True Crime Story",
-  "Fantasy Adventure",
-  "Science Fiction",
-  "Animal Story",
-  "Space Mystery",
+  'Historic Story',
+  'Kids Story',
+  'Motivational Story',
+  'Funny Story',
+  'AI Innovation',
+  'AI in Education',
+  'Horror Story',
+  'Tech Brreakthrough',
+  'AI in Healthcare',
+  'True Crime Story',
+  'Fantasy Adventure',
+  'Science Fiction',
+  'Animal Story',
+  'Space Mystery',
 ];
 
 function Topic({ onHandleInputChange }) {
@@ -29,13 +29,16 @@ function Topic({ onHandleInputChange }) {
   const [selectedScriptIndex, setSelectedScriptIndex] = useState();
   const [scripts, setScript] = useState();
   const [loading, setLoading] = useState(false);
+  const [trendingTopics, setTrendingTopics] = useState([]);
+  const [trendingLoading, setTrendingLoading] = useState(false);
+  const [trendingError, setTrendingError] = useState(null);
 
   const GenerateScript = async () => {
     setLoading(true);
     setselectTopic(null);
     setSelectedScriptIndex(null);
     try {
-      const result = await axios.post("/api/generate_script", {
+      const result = await axios.post('/api/generate_script', {
         topic: selectedTopic,
       });
       console.log(result.data);
@@ -48,15 +51,25 @@ function Topic({ onHandleInputChange }) {
   };
 
   useEffect(() => {
-    
-  }, [selectedTopic]);
+    setTrendingLoading(true);
+    axios
+      .get('/api/trending_topics')
+      .then((res) => {
+        setTrendingTopics(res.data.topics || []);
+        setTrendingError(null);
+      })
+      .catch((err) => {
+        setTrendingError('Failed to fetch trending topics');
+      })
+      .finally(() => setTrendingLoading(false));
+  }, []);
 
   return (
     <div>
       <h2 className="mb-1">Project Title</h2>
       <Input
         placeholder="Enter your project title"
-        onChange={(event) => onHandleInputChange("title", event.target.value)}
+        onChange={(event) => onHandleInputChange('title', event.target.value)}
       />
       <div className="mt-5">
         <h2>Video Topic</h2>
@@ -65,6 +78,7 @@ function Topic({ onHandleInputChange }) {
         <Tabs defaultValue="suggestion" className="w-full mt-2">
           <TabsList>
             <TabsTrigger value="suggestion">Suggestions</TabsTrigger>
+            <TabsTrigger value="trending">Trending</TabsTrigger>
             <TabsTrigger value="your_topic">Your Topic</TabsTrigger>
           </TabsList>
           <TabsContent value="suggestion">
@@ -73,19 +87,50 @@ function Topic({ onHandleInputChange }) {
                 <Button
                   variant="outline"
                   key={index}
-                  
                   onClick={() => {
-                 
                     setselectTopic(suggestion);
-                    onHandleInputChange("topic", suggestion);
-                    console.log(selectedTopic)
-                    console.log(suggestion)
+                    onHandleInputChange('topic', suggestion);
                   }}
-                  className={`m-1 ${suggestion === selectedTopic && 'bg-secondary text-white !bg-secondary' }` }
+                  className={`m-1 ${
+                    suggestion === selectedTopic &&
+                    'bg-secondary text-white !bg-secondary'
+                  }`}
                 >
                   {suggestion}
                 </Button>
               ))}
+            </div>
+          </TabsContent>
+          <TabsContent value="trending">
+            <div>
+              {trendingLoading && <div>Loading...</div>}
+              {trendingError && (
+                <div className="text-red-500">{trendingError}</div>
+              )}
+              {!trendingLoading &&
+                !trendingError &&
+                trendingTopics.length > 0 &&
+                trendingTopics.map((topic, idx) => (
+                  <Button
+                    variant="outline"
+                    key={idx}
+                    onClick={() => {
+                      setselectTopic(topic);
+                      onHandleInputChange('topic', topic);
+                    }}
+                    className={`m-1 ${
+                      topic === selectedTopic &&
+                      'bg-secondary text-white !bg-secondary'
+                    }`}
+                  >
+                    {topic}
+                  </Button>
+                ))}
+              {!trendingLoading &&
+                !trendingError &&
+                trendingTopics.length === 0 && (
+                  <div>No trending topics found.</div>
+                )}
             </div>
           </TabsContent>
           <TabsContent value="your_topic">
@@ -94,7 +139,7 @@ function Topic({ onHandleInputChange }) {
               <Textarea
                 placeholder="Enter your topic"
                 onChange={(event) =>
-                  onHandleInputChange("topic", event.target.value)
+                  onHandleInputChange('topic', event.target.value)
                 }
               />
             </div>
@@ -108,11 +153,11 @@ function Topic({ onHandleInputChange }) {
                 <div
                   key={index}
                   className={`p-3 border rounded-lg mt-3 cursor-pointer
-                  ${selectedScriptIndex == index && "border-white bg-secondary"}
+                  ${selectedScriptIndex == index && 'border-white bg-secondary'}
                 `}
                   onClick={() => {
-                    console.log("Selected index:", index);
-                    onHandleInputChange('script',item.content)
+                    console.log('Selected index:', index);
+                    onHandleInputChange('script', item.content);
                     setSelectedScriptIndex(index);
                   }}
                 >
