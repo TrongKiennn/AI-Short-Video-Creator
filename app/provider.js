@@ -12,15 +12,22 @@ function Provider({children}) {
   const CreateUser=useMutation(api.users.CreateNewUser)  
   useEffect(()=>{
     const unsubcribe=onAuthStateChanged(auth,async (user)=>{
-      console.log(user);
-      setUser(user);
+      
+     
 
       const result =await CreateUser({
           name:user?.displayName,
           email:user?.email,
           pictureURL:user?.photoURL,
       });
-      console.log(result)
+
+      const combinedUser = {
+        ...user,
+        _id: result?._id,
+      };
+
+      setUser(combinedUser);
+
     })
     return ()=>unsubcribe();
   },[])

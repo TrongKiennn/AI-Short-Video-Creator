@@ -1,8 +1,13 @@
 import React from 'react'
+import VideoList from './_components/VideoList'
 
 function Dashboard() {
   return (
-    <div>Dashboard</div>
+    <div>
+      <h2 className='font-bold text-3xl'>My Video</h2>
+      <VideoList/>
+    </div>
+    
   )
 }
 
