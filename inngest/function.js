@@ -1,6 +1,8 @@
 import { generateImageScript } from "@/configs/AiModel";
 import { inngest } from "./client";
 import axios from "axios";
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "@/convex/_generated/api";
 
 const BASE_URL='https://aigurulab.tech';
 
@@ -27,7 +29,8 @@ export const GenerateVideoData=inngest.createFunction(
   {id:"generate-video-data"},
   {event:"generate-video-data"},
   async({event,step})=>{
-    const {script, topic, title, caption, videoStyle, voice}=event?.data;
+    const {script, topic, title, caption, videoStyle, voice, recordId}=event?.data;
+    const convex=new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL)
     //Generate Audio File
 
     //Generate Caption
@@ -77,7 +80,7 @@ export const GenerateVideoData=inngest.createFunction(
                     'Content-Type': 'application/json', // Content Type
                 },
             })
-            console.log(result.data.image) //Output Result: Base 64 Image
+            console.log(result.data) //Output Result: Base 64 Image
             return result.data.image;
           })
         )
@@ -85,7 +88,18 @@ export const GenerateVideoData=inngest.createFunction(
       }
     );
 
+    const UpdateDB=await step.run(
+      'UpdateDB',
+      async()=>{
+        const result=await convex.mutation(api.videoData.UpdateVideoRecord,{
+          recordId:recordId,
+          images:GenerateImages
+        });
+        return result
+      }
+    )
+
     //Save all Data to DB
-    return GenerateImages
+    return "Executed successfully"
   }
 )
