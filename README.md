@@ -64,6 +64,9 @@ Chạy hai lệnh sau trong terminal:
 ```bash
 npm install convex@latest
 npx convex dev
+
+npm install inngest
+npx inngest-cli@latest dev
 ```
 
 > 💡 **Lưu ý:** `convex@latest` đảm bảo bạn luôn sử dụng phiên bản mới nhất của thư viện.
