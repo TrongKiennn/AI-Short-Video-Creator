@@ -1,4 +1,3 @@
-"use client"
 import React from 'react'
 import Image from 'next/image'
 
@@ -16,7 +15,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { HomeIcon, LucideFileVideo, Menu, Search, WalletCards } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 const MenuItems=[
   {
@@ -27,6 +25,11 @@ const MenuItems=[
   {
     title:"Create New Video",
     url:'/#',
+    icon: LucideFileVideo
+  },
+  {
+    title:"Text to Speech",
+    url:'/texttospeech',
     icon: LucideFileVideo
   },
   {
@@ -42,7 +45,6 @@ const MenuItems=[
 ]
 
 function AppSidebar() {
-  const path=usePathname();
   return (
     <Sidebar>
       <SidebarHeader>
@@ -66,7 +68,7 @@ function AppSidebar() {
             <SidebarMenu>
               {MenuItems.map((menu,index)=>(
                 <SidebarMenuItem className="mt-3" key={index}>
-                  <SidebarMenuButton isActive={path==menu.url}  className="p-5">
+                  <SidebarMenuButton className="p-5">
                     <Link href={menu.url} className='flex items-center gap-4 p-3'>
                       <menu.icon/>
                       <span>{menu?.title}</span>
