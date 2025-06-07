@@ -55,8 +55,9 @@ function VideoList() {
         </div>
         :
         <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 mt-10'>
-            {videoList?.map((video,index)=>(               
-                <div  key={index} className='relative'>
+            {videoList?.map((video,index)=>(
+                <Link key={index} href={'play-video/'+video?._id}>              
+                <div   className='relative'>
                     {video.status=='completed'? <Image 
                         src={video?.images[0]} 
                         alt={video?.title}
@@ -74,6 +75,7 @@ function VideoList() {
                         <h2 className='text-sm'>{moment(video?._creationTime).fromNow()}</h2>
                     </div>
                 </div>
+                </Link> 
             ))}
         </div>
         }
