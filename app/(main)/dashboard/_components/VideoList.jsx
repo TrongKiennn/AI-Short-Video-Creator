@@ -58,7 +58,7 @@ function VideoList() {
             {videoList?.map((video,index)=>(
                 <Link key={index} href={'play-video/'+video?._id}>              
                 <div   className='relative'>
-                    {video.status=='completed'? <Image 
+                    {video.status=='complete'? <Image 
                         src={video?.images[0]} 
                         alt={video?.title}
                         width={500}
