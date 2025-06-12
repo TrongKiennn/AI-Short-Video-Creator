@@ -13,7 +13,10 @@ function Provider({children}) {
   useEffect(()=>{
     const unsubcribe=onAuthStateChanged(auth,async (user)=>{
       
-     
+      if (!user) {
+        setUser(null); 
+        return;
+      }
 
       const result =await CreateUser({
           name:user?.displayName,
