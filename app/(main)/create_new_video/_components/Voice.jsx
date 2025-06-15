@@ -1,51 +1,19 @@
 import React from "react";
 import { useState } from "react";
 const options = [
-  {
-    value: "af_sarah",
-    name: "🇺🇸 Sarah (Female)",
-  },
-  {
-    value: "af_sky",
-    name: "🇺🇸 Sky (Female)",
-  },
-  {
-    value: "am_adam",
-    name: "🇺🇸 Adam (Male)",
-  },
-  {
-    value: "hf_alpha",
-    name: "🇮🇳 Alpha (Female)",
-  },
-  {
-    value: "hm_psi",
-    name: "🇮🇳 Psi (Male)",
-  },
-  {
-    value: "am_echo",
-    name: "🇺🇸 Echo (Male)",
-  },
-  {
-    value: "am_eric",
-    name: "🇺🇸 Eric (Male)",
-  },
-  {
-    value: "am_fenrir",
-    name: "🇺🇸 Fenrir (Male)",
-  },
-  {
-    value: "am_liam",
-    name: "🇺🇸 Liam (Male)",
-  },
-  {
-    value: "am_michael",
-    name: "🇺🇸 Michael (Male)",
-  },
-  {
-    value: "am_onyx",
-    name: "🇺🇸 Onyx (Male)",
-  },
+  { value: "Aaliyah-PlayAI", name: "Aaliyah (PlayAI)" },
+  { value: "Adelaide-PlayAI", name: "Adelaide (PlayAI)" },
+  { value: "Angelo-PlayAI", name: "Angelo (PlayAI)" },
+  { value: "Arista-PlayAI", name: "Arista (PlayAI)" },
+  { value: "Atlas-PlayAI", name: "Atlas (PlayAI)" },
+  { value: "Basil-PlayAI", name: "Basil (PlayAI)" },
+  { value: "Briggs-PlayAI", name: "Briggs (PlayAI)" },
+  { value: "Calum-PlayAI", name: "Calum (PlayAI)" },
+  { value: "Celeste-PlayAI", name: "Celeste (PlayAI)" },
+  { value: "Cheyenne-PlayAI", name: "Cheyenne (PlayAI)" },
+  { value: "Chip-PlayAI", name: "Chip (PlayAI)" },
 ];
+
 
 function Voice({ onHandleInputChange }) {
   const [selectedVoice, setSelectedVoice] = useState();

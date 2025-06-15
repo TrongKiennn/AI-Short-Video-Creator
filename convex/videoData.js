@@ -9,6 +9,7 @@ export const CreateVideoData=mutation({
         videoStyle:v.string(),
         caption:v.string(),
         voice:v.string(),
+        audioUrl: v.string(),
         uid:v.id('users'),
         createdBy:v.string()
     },
@@ -20,6 +21,7 @@ export const CreateVideoData=mutation({
             videoStyle:args.videoStyle,
             caption:args.caption,
             voice:args.voice,
+            audioUrl: args.audioUrl,
             uid:args.uid,
             createdBy:args.createdBy,
             status:'pending'
