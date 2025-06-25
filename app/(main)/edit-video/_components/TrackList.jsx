@@ -4,12 +4,22 @@ import Image from 'next/image';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import defaultImage from '@/public/default.png';
 import { VideoFrameContext } from '@/app/_context/VideoFramesContext';
+import { useConvex, useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import axios from 'axios';
+
+import { Loader2 } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 function TrackList({ videoData }) {
   const [imageList, setImageList] = useState([]);
   const fileInputRef = useRef(null);
   const [selectedReplaceIndex, setSelectedReplaceIndex] = useState(null);
   const {frameList, setFrameList}=useContext(VideoFrameContext)
+  const [isSaving, setIsSaving] = useState(false);
+
+  const updateImages = useMutation(api.videoData.UpdateVideoImages);
+
   useEffect(() => {
     if (videoData?.images) {
       const mapped = videoData.images.map((url) => ({
@@ -19,6 +29,19 @@ function TrackList({ videoData }) {
       setImageList(mapped);
     }
   }, [videoData]);
+
+  const updateVideoImages = async (newImageList) => {
+   
+      const result = await updateImages({
+        recordId: videoData?._id,
+        images: newImageList,
+      });
+
+     
+      redirect(`/play-video/${videoData?._id}`);
+    
+  };
+  
 
   const handleDelete = (index) => {
     const updated = [...imageList];
@@ -42,6 +65,7 @@ function TrackList({ videoData }) {
   };
 
   const handleSave = async () => {
+    setIsSaving(true);
     const newImageUrls = await Promise.all(
       imageList.map(async (item) => {
         if (item.type === 'url' || item.type === 'default') {
@@ -50,19 +74,19 @@ function TrackList({ videoData }) {
           const formData = new FormData();
           formData.append('file', item.value);
 
-          const res = await fetch('/api/supabase/upload-to-supabase', {
-            method: 'POST',
-            body: formData,
+          const result = await axios.post("/api/supabase",formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
           });
-
-          const data = await res.json();
+          const data =result.data;
           return data.url;
         }
       })
     );
 
-    console.log('Danh sách URL sau khi Save:', newImageUrls);
-
+    // console.log('Danh sách URL sau khi Save:', newImageUrls);
+    updateVideoImages(newImageUrls);
   
   };
 
@@ -93,9 +117,9 @@ function TrackList({ videoData }) {
                 className="object-cover"
               />
               <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                <Button size="sm" variant="destructive" onClick={() => handleDelete(index)}>
+                {/* <Button size="sm" variant="destructive" onClick={() => handleDelete(index)}>
                   X
-                </Button>
+                </Button> */}
                 <Button size="sm" onClick={() => handleReplaceClick(index)}>
                   Replace
                 </Button>
@@ -113,8 +137,12 @@ function TrackList({ videoData }) {
         hidden
       />
 
-      <Button size="sm" className="mt-4 w-full" onClick={handleSave}>
-        Save frame
+      <Button size="sm" className="mt-4 w-full" onClick={handleSave} disabled={isSaving}>
+        {isSaving ? (
+          <Loader2 className="animate-spin w-4 h-4" />
+        ) : (
+          'Save frame'
+        )}
       </Button>
     </div>
   );
