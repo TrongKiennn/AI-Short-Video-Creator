@@ -2,7 +2,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 
-const API_KEY = "AIzaSyDxyU3DK-f0ty_2oIWrKG6MB3PVlHFx-qs";
+const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 const ChartJS = dynamic(() => import("@/components/ChartJS"), { ssr: false });
 
 function extractVideoId(urlOrId) {
