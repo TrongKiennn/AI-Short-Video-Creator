@@ -21,5 +21,11 @@ export default defineSchema({
         uid:v.id("users"),
         createdBy:v.string(),
         status:v.optional(v.string())
-    })
+    }),
+    trendingCache:defineTable({
+        cacheKey:v.string(),
+        data:v.any(),
+        expiresAt:v.number(),
+        createdAt:v.number()
+    }).index("by_key", ["cacheKey"])
 })
