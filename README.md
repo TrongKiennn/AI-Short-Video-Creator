@@ -82,7 +82,7 @@ npm run dev
 Ứng dụng sẽ được khởi động tại địa chỉ mặc định:  
 [http://localhost:3000](http://localhost:3000) _(hoặc tùy thuộc cấu hình)_
 
-<b>Sau lần cài đặt đầu tiên, để chạy chương trình một cách cục bộ, chỉ cần chạy 3 lệnh sau, mỗi lệnh ở một terminal riêng
+<b>Sau lần cài đặt đầu tiên, để chạy chương trình một cách cục bộ, chỉ cần chạy 4 lệnh sau, mỗi lệnh ở một terminal riêng
 
 ```bash
 docker compose up
