@@ -25,8 +25,8 @@ function Preview({ formData }) {
       )}
 
       {/* Display topic on top of preview */}
-      {formData?.topic && (
-        <h2 className="absolute top-11 text-center w-full text-yellow-500 text-3xl font-bold bg-gray-900 rounded-3xl">
+      {formData?.topic && formData.topic.trim() !== '' && (
+        <h2 className="absolute top-11 text-center w-full text-yellow-500 text-3xl font-bold bg-gray-900 rounded-xl">
           {formData.topic}
         </h2>
       )}

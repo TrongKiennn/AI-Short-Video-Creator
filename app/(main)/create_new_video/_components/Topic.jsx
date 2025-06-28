@@ -148,8 +148,15 @@ function Topic({ onHandleInputChange }) {
                   variant="outline"
                   key={index}
                   onClick={() => {
-                    setselectTopic(suggestion);
-                    onHandleInputChange('topic', suggestion);
+                    if (suggestion === selectedTopic) {
+                      // If the same topic is clicked, unselect it
+                      setselectTopic(null);
+                      onHandleInputChange('topic', '');
+                    } else {
+                      // Select the new topic
+                      setselectTopic(suggestion);
+                      onHandleInputChange('topic', suggestion);
+                    }
                   }}
                   className={`m-1 cursor-pointer border-2 transition-all duration-200 hover:bg-gray-50 hover:border-gray-400 ${
                     suggestion === selectedTopic
