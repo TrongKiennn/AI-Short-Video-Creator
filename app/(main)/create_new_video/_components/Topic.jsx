@@ -94,14 +94,17 @@ function Topic({ onHandleInputChange }) {
   };
 
   const GenerateScript = async () => {
+    if (!selectedTopic) {
+      alert('Please select a topic first');
+      return;
+    }
+
     setLoading(true);
-    setselectTopic(null);
     setSelectedScriptIndex(null);
     try {
       const result = await axios.post('/api/generate_script', {
         topic: selectedTopic,
       });
-      console.log(result.data);
       setScript(result.data?.scripts);
     } catch (e) {
       console.log(e);
@@ -127,7 +130,7 @@ function Topic({ onHandleInputChange }) {
 
         <Tabs defaultValue="suggestion" className="w-full mt-2">
           <TabsList>
-            <TabsTrigger value="suggestion">Suggestions</TabsTrigger>
+            <TabsTrigger value="suggestion">Trending keywords</TabsTrigger>
             <TabsTrigger value="your_topic">Your Topic</TabsTrigger>
           </TabsList>
           <TabsContent value="suggestion">
@@ -147,10 +150,12 @@ function Topic({ onHandleInputChange }) {
                   onClick={() => {
                     setselectTopic(suggestion);
                     onHandleInputChange('topic', suggestion);
-                    console.log(selectedTopic);
-                    console.log(suggestion);
                   }}
-                  className={`m-1 ${suggestion === selectedTopic && 'bg-secondary text-white'}`}
+                  className={`m-1 cursor-pointer border-2 transition-all duration-200 hover:bg-gray-50 hover:border-gray-400 ${
+                    suggestion === selectedTopic
+                      ? 'text-yellow-300 text-2xl font-bold'
+                      : 'bg-transparent text-current border-gray-300'
+                  }`}
                 >
                   {suggestion}
                 </Button>
@@ -162,9 +167,11 @@ function Topic({ onHandleInputChange }) {
               <h2 className="mb-1">Enter your own topic</h2>
               <Textarea
                 placeholder="Enter your topic"
-                onChange={(event) =>
-                  onHandleInputChange('topic', event.target.value)
-                }
+                onChange={(event) => {
+                  const topic = event.target.value;
+                  onHandleInputChange('topic', topic);
+                  setselectTopic(topic);
+                }}
               />
             </div>
           </TabsContent>
@@ -180,7 +187,6 @@ function Topic({ onHandleInputChange }) {
                   ${selectedScriptIndex == index && 'border-white bg-secondary'}
                 `}
                   onClick={() => {
-                    console.log('Selected index:', index);
                     onHandleInputChange('script', item.content);
                     setSelectedScriptIndex(index);
                   }}
@@ -196,7 +202,7 @@ function Topic({ onHandleInputChange }) {
         className="mt-3"
         size="sm"
         onClick={GenerateScript}
-        disabled={loading}
+        disabled={loading || !selectedTopic}
       >
         {loading ? <Loader2Icon className="animate-spin" /> : <SparkleIcon />}
         Generate Script
