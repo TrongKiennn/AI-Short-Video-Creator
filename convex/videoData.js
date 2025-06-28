@@ -70,3 +70,18 @@ export const GetVideoById=query({
         return result;
     }
 })
+
+
+export const UpdateVideoImages=mutation({
+    args:{
+        recordId:v.id('videoData'),
+        images:v.optional(v.any()),
+    },
+    handler: async(ctx,args)=>{
+        const result=await ctx.db.patch(args.recordId,{
+            images:args.images,
+        })
+
+        return result
+    }
+})
