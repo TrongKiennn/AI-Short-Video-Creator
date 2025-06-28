@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as trendingCache from "../trendingCache.js";
 import type * as users from "../users.js";
 import type * as videoData from "../videoData.js";
 
@@ -25,6 +26,7 @@ import type * as videoData from "../videoData.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  trendingCache: typeof trendingCache;
   users: typeof users;
   videoData: typeof videoData;
 }>;
