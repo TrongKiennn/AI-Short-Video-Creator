@@ -87,7 +87,7 @@ npm run dev
 ```bash
 docker compose up
 npx convex dev
-npx inngest-cli@latest dev
+npx inngest-cli dev
 npm run dev
 ```
 

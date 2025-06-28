@@ -15,12 +15,31 @@ export const getCachedData = query({
     // Check if cache is expired
     const now = Date.now();
     if (now > cache.expiresAt) {
-      // Delete expired cache
-      await ctx.db.delete(cache._id);
+      // Return null for expired cache, deletion will be handled by mutation
       return null;
     }
 
     return cache.data;
+  },
+});
+
+// Delete expired cache (separate mutation)
+export const deleteExpiredCache = mutation({
+  args: { cacheKey: v.string() },
+  handler: async (ctx, args) => {
+    const cache = await ctx.db
+      .query('trendingCache')
+      .withIndex('by_key', (q) => q.eq('cacheKey', args.cacheKey))
+      .first();
+
+    if (cache) {
+      const now = Date.now();
+      if (now > cache.expiresAt) {
+        await ctx.db.delete(cache._id);
+        return { deleted: true };
+      }
+    }
+    return { deleted: false };
   },
 });
 

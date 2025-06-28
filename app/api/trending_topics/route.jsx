@@ -1,15 +1,94 @@
 import { NextResponse } from 'next/server';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '@/convex/_generated/api';
+import nlp from 'compromise';
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL);
+
+// Function to extract keywords using compromise.js
+function extractKeywordsFromHeadlines(headlines) {
+  const allKeywords = [];
+
+  headlines.forEach((headline) => {
+    const doc = nlp(headline);
+
+    // Extract different types of entities
+    const people = doc.people().out('array');
+    const places = doc.places().out('array');
+    const organizations = doc.organizations().out('array');
+    const topics = doc.topics().out('array');
+
+    // Extract important nouns (but not common ones)
+    const nouns = doc
+      .nouns()
+      .out('array')
+      .filter(
+        (noun) =>
+          noun.length > 3 &&
+          ![
+            'news',
+            'report',
+            'story',
+            'article',
+            'update',
+            'time',
+            'year',
+            'day',
+            'week',
+          ].includes(noun.toLowerCase())
+      );
+
+    // Extract adjectives that might be important (like "breaking", "major")
+    const adjectives = doc
+      .adjectives()
+      .out('array')
+      .filter((adj) =>
+        [
+          'breaking',
+          'major',
+          'new',
+          'latest',
+          'urgent',
+          'exclusive',
+          'live',
+        ].includes(adj.toLowerCase())
+      );
+
+    // Combine all keywords with priority order
+    const headlineKeywords = [
+      ...people,
+      ...places,
+      ...organizations,
+      ...topics,
+      ...nouns,
+      ...adjectives,
+    ].filter((keyword) => keyword && keyword.length > 2);
+
+    allKeywords.push(...headlineKeywords);
+  });
+
+  // Remove duplicates and common words, prioritize by frequency
+  const keywordFreq = {};
+  allKeywords.forEach((keyword) => {
+    const clean = keyword.toLowerCase().trim();
+    keywordFreq[clean] = (keywordFreq[clean] || 0) + 1;
+  });
+
+  // Sort by frequency and return top 25 keywords from NewsAPI
+  const sortedKeywords = Object.entries(keywordFreq)
+    .sort(([, a], [, b]) => b - a)
+    .map(([keyword]) => keyword.charAt(0).toUpperCase() + keyword.slice(1))
+    .slice(0, 25); // Top 25 keywords from NewsAPI extraction
+
+  return sortedKeywords;
+}
 
 export async function GET() {
   try {
     const SERPAPI_CACHE_KEY = 'serpapi_trending_topics';
     const NEWS_CACHE_KEY = 'news_trending_topics';
-    const SERPAPI_TTL_MINUTES = 480; // 8 hours for SerpAPI
-    const NEWS_TTL_MINUTES = 15; // 15 minutes for NewsAPI
+    const SERPAPI_TTL_MINUTES = 480; // 8 hours for SerpAPI, 1 for testing
+    const NEWS_TTL_MINUTES = 15; // 15 minutes for NewsAPI, 1 for testing
 
     // Check both caches simultaneously
     const [cachedSerpData, cachedNewsData] = await Promise.all([
@@ -20,6 +99,18 @@ export async function GET() {
         cacheKey: NEWS_CACHE_KEY,
       }),
     ]);
+
+    // Clean up expired caches if needed
+    if (!cachedSerpData) {
+      await convex.mutation(api.trendingCache.deleteExpiredCache, {
+        cacheKey: SERPAPI_CACHE_KEY,
+      });
+    }
+    if (!cachedNewsData) {
+      await convex.mutation(api.trendingCache.deleteExpiredCache, {
+        cacheKey: NEWS_CACHE_KEY,
+      });
+    }
 
     // Fetch fresh data for expired caches
     const fetchPromises = [];
@@ -42,7 +133,6 @@ export async function GET() {
 
                 const topics =
                   serpData.trending_searches
-                    ?.slice(0, 15) // Maximum 15 keywords from SerpAPI
                     ?.map((trend) => {
                       let topic = trend.query
                         .replace(/^\w+:\s*/, '') // Remove prefix
@@ -52,8 +142,14 @@ export async function GET() {
                       topic = topic.charAt(0).toUpperCase() + topic.slice(1);
                       return topic;
                     })
-                    ?.filter((topic) => topic && topic.length > 2) || // Filter very short topics
-                  [];
+                    ?.filter((topic) => topic && topic.length > 2) // Filter very short topics
+                    ?.filter(
+                      (topic, index, arr) =>
+                        arr.findIndex(
+                          (t) => t.toLowerCase() === topic.toLowerCase()
+                        ) === index
+                    ) // Remove duplicates from SerpAPI
+                    ?.slice(0, 25) || []; // Maximum 25 keywords from SerpAPI
 
                 if (topics.length > 0) {
                   // Cache SerpAPI results for 8 hours
@@ -87,29 +183,56 @@ export async function GET() {
               if (newsResponse.ok) {
                 const newsData = await newsResponse.json();
 
-                const topics =
+                // Extract raw headlines first
+                const headlines =
                   newsData.articles
-                    ?.slice(0, 5) // Maximum 5 headlines from NewsAPI
-                    ?.map((article) => {
-                      let topic = article.title
-                        .replace(/\s*-\s*[^-]*$/, '') // Remove source at end
-                        .replace(/^\w+:\s*/, '') // Remove source at beginning
-                        .replace(/["']/g, '') // Remove quotes
-                        .split(
-                          /\s+(and|in|at|on|with|to|for|as|amid|after|before)\s+/i
-                        )[0] // Take first meaningful part
-                        .replace(/\.\.\.$/, '') // Remove trailing dots
-                        .trim();
+                    ?.slice(0, 20) // Take at most 20 crude headlines
+                    ?.map((article) => article.title)
+                    ?.filter((title) => title && title.length > 10) || [];
 
-                      // Capitalize and limit length
-                      topic = topic.charAt(0).toUpperCase() + topic.slice(1);
-                      if (topic.length > 40) {
-                        topic = topic.substring(0, 40) + '...';
-                      }
-                      return topic;
-                    })
-                    ?.filter((topic) => topic && topic.length > 8) || // Filter short topics
-                  [];
+                let topics = [];
+
+                if (headlines.length > 0) {
+                  try {
+                    // Use compromise.js for keyword extraction
+                    topics = extractKeywordsFromHeadlines(headlines);
+                    console.log(
+                      'Extracted keywords using compromise.js:',
+                      topics
+                    );
+                  } catch (error) {
+                    console.warn(
+                      'Compromise.js extraction failed, using fallback:',
+                      error.message
+                    );
+                    // Fallback to simple extraction - process ALL headlines
+                    topics = headlines
+                      .map((headline) => {
+                        let topic = headline
+                          .replace(/\s*-\s*[^-]*$/, '')
+                          .replace(/^\w+:\s*/, '')
+                          .replace(/["']/g, '')
+                          .split(
+                            /\s+(and|in|at|on|with|to|for|as|amid|after|before)\s+/i
+                          )[0]
+                          .trim();
+
+                        topic = topic.charAt(0).toUpperCase() + topic.slice(1);
+                        if (topic.length > 40) {
+                          topic = topic.substring(0, 40) + '...';
+                        }
+                        return topic;
+                      })
+                      .filter((topic) => topic && topic.length > 8)
+                      .filter(
+                        (topic, index, arr) =>
+                          arr.findIndex(
+                            (t) => t.toLowerCase() === topic.toLowerCase()
+                          ) === index
+                      ) // Remove duplicates from NewsAPI
+                      .slice(0, 25); // Top 25 keywords from fallback extraction
+                  }
+                }
 
                 if (topics.length > 0) {
                   // Cache NewsAPI results for 15 minutes
@@ -144,15 +267,12 @@ export async function GET() {
     }
 
     if (newsTopics && newsTopics.length > 0) {
-      // Add NewsAPI topics if we have space (max 20 total: 15 SerpAPI + 5 NewsAPI)
-      const remainingSlots = 20 - finalTopics.length;
-      if (remainingSlots > 0) {
-        finalTopics = [...finalTopics, ...newsTopics.slice(0, remainingSlots)];
-      }
+      // Add ALL NewsAPI topics (no slot limit)
+      finalTopics = [...finalTopics, ...newsTopics];
       sources.push(`newsapi(${newsSource})`);
     }
 
-    // Remove duplicates while preserving order
+    // Final duplicate removal across ALL sources while preserving order
     finalTopics = finalTopics.filter(
       (topic, index, arr) =>
         arr.findIndex((t) => t.toLowerCase() === topic.toLowerCase()) === index
