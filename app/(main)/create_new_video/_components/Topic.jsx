@@ -8,20 +8,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
 const originalSuggestions = [
-  'Historic Story',
-  'Kids Story',
-  'Motivational Story',
-  'Funny Story',
-  'AI Innovation',
-  'AI in Education',
-  'Horror Story',
-  'Tech Breakthrough',
-  'AI in Healthcare',
-  'True Crime Story',
-  'Fantasy Adventure',
-  'Science Fiction',
-  'Animal Story',
-  'Space Mystery',
+  'HISTORIC STORY',
+  'KIDS STORY',
+  'MOTIVATIONAL STORY',
+  'FUNNY STORY',
+  'AI INNOVATION',
+  'AI IN EDUCATION',
+  'HORROR STORY',
+  'TECH BREAKTHROUGH',
+  'AI IN HEALTHCARE',
+  'TRUE CRIME STORY',
+  'FANTASY ADVENTURE',
+  'SCIENCE FICTION',
+  'ANIMAL STORY',
+  'SPACE MYSTERY',
 ];
 
 function Topic({ onHandleInputChange }) {
@@ -36,34 +36,34 @@ function Topic({ onHandleInputChange }) {
   const normalizeForComparison = (text) => {
     return text
       .replace(/^[,\-.\s]+|[,\-.\s]+$/g, '') // Remove specific punctuation (comma, hyphen, period, space) from start/end
-      .toLowerCase()
+      .toUpperCase() // Normalize to uppercase for case-insensitive comparison
       .trim();
   };
 
-  // Function to normalize and remove duplicates while preserving order
+  // Function to normalize and remove duplicates while preserving order (API topics prioritized)
   const normalizeAndRemoveDuplicates = (apiTopics, originalTopics) => {
     const seen = new Set();
+    const result = [];
 
-    // Add API topics first (normalized for duplicate checking)
+    // Add API topics first (prioritized)
     apiTopics.forEach((topic) => {
       const normalized = normalizeForComparison(topic);
-      if (normalized) {
+      if (normalized && !seen.has(normalized)) {
         seen.add(normalized);
+        result.push(normalized);
       }
     });
 
-    // Add original topics if they don't duplicate API topics
+    // Add original topics only if they don't duplicate API topics (no normalization needed - already clean)
     originalTopics.forEach((topic) => {
-      const normalized = normalizeForComparison(topic);
-      if (normalized) {
-        seen.add(normalized);
+      if (!seen.has(topic)) {
+        // Original topics are already normalized (uppercase, clean)
+        seen.add(topic);
+        result.push(topic);
       }
     });
 
-    // Convert Set back to array and capitalize first letter for display
-    return Array.from(seen).map(
-      (topic) => topic.charAt(0).toUpperCase() + topic.slice(1)
-    );
+    return result;
   };
 
   const fetchTrendingTopics = async () => {
