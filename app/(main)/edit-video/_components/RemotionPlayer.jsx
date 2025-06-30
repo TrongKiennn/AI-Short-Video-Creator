@@ -1,15 +1,15 @@
 "use client"
-import React, { useState } from 'react'
+import React from 'react'
 import { Player } from "@remotion/player";
-import { useVideoConfig } from 'remotion';
 import RemotionEditor from '@/app/_components/RemotionEditor';
 
-function RemotionPlayer({videoData}) {
-  
-  const [durationInFrames,setDurationInFrame]=useState(100)
+function RemotionPlayer({videoData, onTimeUpdate, onDurationUpdate, durationInFrames, newAudio}) {
+
   return (
     <div className='border rounded-2xl'>
         <Player
+            // Add a key to force re-mount when the audio source changes
+            key={newAudio?.name || videoData?.audioUrl}
             component={RemotionEditor}
             durationInFrames={Number(durationInFrames.toFixed(0))}
             compositionWidth={1440}
@@ -22,7 +22,13 @@ function RemotionPlayer({videoData}) {
             }}
             inputProps={{
               videoData:videoData,
-              setDurationInFrame:(frameValue)=>setDurationInFrame(frameValue)
+              setDurationInFrame: onDurationUpdate,
+              newAudio: newAudio
+            }}
+            onTimeUpdate={(frame) => {
+              if (onTimeUpdate) {
+                onTimeUpdate(frame);
+              }
             }}
         />
     </div>

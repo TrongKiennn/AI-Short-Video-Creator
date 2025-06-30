@@ -17,7 +17,7 @@ function VideoInfo({videoData}) {
         <p className='text-gray-500'>Script: {videoData?.script}</p>
         <h2>Video Style: {videoData?.videoStyle}</h2>
         <div className='flex justify-between items-center mt-3'>
-          <Link href={'/edit-video/' +videoData?._id}>
+          <Link href={`/edit-video/${videoData?._id}`}>
             <Button>Edit Video</Button>
           </Link>
           
