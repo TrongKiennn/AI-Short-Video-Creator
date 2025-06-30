@@ -1,39 +1,52 @@
-"use client";
-import React, { useState, useEffect, useRef } from "react";
-import Topic from "./_components/Topic";
-import VideoStyle from "./_components/VideoStyle";
-import Voice from "./_components/Voice";
-import Captions from "./_components/Captions";
-import Preview from "./_components/Preview";
-import GenerateAudio from "./_components/GenerateAudio";
-import { Loader2Icon, WandSparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useAuthContext } from "@/app/provider";
-import TextToSpeech from "@/app/_components/TextToSpeech";
-import { Textarea } from "@/components/ui/textarea";
+'use client';
+import React, { useState, useEffect, useRef } from 'react';
+import Topic from './_components/Topic';
+import VideoStyle from './_components/VideoStyle';
+import Voice from './_components/Voice';
+import Captions from './_components/Captions';
+import Preview from './_components/Preview';
+import GenerateAudio from './_components/GenerateAudio';
+import { Loader2Icon, WandSparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import axios from 'axios';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useAuthContext } from '@/app/provider';
+import TextToSpeech from '@/app/_components/TextToSpeech';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'react-toastify';
+import { useVideoStatusPolling } from '@/hooks/useVideoStatusPolling';
 
 function CreateNewVideo() {
   const [formData, setFormData] = useState({});
   const CreateInitialVideoRecord = useMutation(api.videoData.CreateVideoData);
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
-  const [ttsText, setTtsText] = useState("");
+  const [ttsText, setTtsText] = useState('');
   const [mergeLoading, setMergeLoading] = useState(false);
   const [mergedVideoUrl, setMergedVideoUrl] = useState(null);
   const [lastVideoId, setLastVideoId] = useState(null);
 
-  console.log("User ne", user);
+  // Add polling hook
+  useVideoStatusPolling(lastVideoId, (completedVideo) => {
+    toast.success('🎉 Your video is ready!', {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  });
+
+  console.log('User ne', user);
 
   const onHandleInputChange = (fieldName, fieldValue) => {
     setFormData((prev) => ({ ...prev, [fieldName]: fieldValue }));
-    if (fieldName === "script") {
+    if (fieldName === 'script') {
       setTtsText(fieldValue); // Đồng bộ ttsText với script
     }
   };
-
 
   const GenerateVideo = async () => {
     if (
@@ -44,34 +57,62 @@ function CreateNewVideo() {
       !formData.voice ||
       !ttsAudioUrl
     ) {
-      console.log("ERROR", "Enter All Field");
+      toast.error('Please fill in all required fields!', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
       return;
     }
 
     setLoading(true);
 
-    const resp = await CreateInitialVideoRecord({
-      title: formData.title,
-      topic: formData.topic,
-      script: formData.script,
-      videoStyle: formData.videoStyle,
-      caption: formData.caption.name,
-      voice: formData.voice,
-      audioUrl: ttsAudioUrl,
-      uid: user?._id,
-      createdBy: user?.email,
+    // Show initial loading toast
+    toast.info('🎬 Your video is being created...', {
+      position: 'top-right',
+      autoClose: false, // Don't auto close this one
+      closeOnClick: false,
+      draggable: false,
+      hideProgressBar: false,
+      toastId: 'video-creation', // Unique ID to control this toast
     });
 
-    setLastVideoId(resp); // Lưu lại id video vừa tạo để merge sau
-    setTtsText(formData.script);
-    const result = await axios.post("/api/generate_video_data", {
-      ...formData,
-      recordId: resp,
-      audioUrl: ttsAudioUrl,
-    });
+    try {
+      const resp = await CreateInitialVideoRecord({
+        title: formData.title,
+        topic: formData.topic,
+        script: formData.script,
+        videoStyle: formData.videoStyle,
+        caption: formData.caption.name,
+        voice: formData.voice,
+        audioUrl: ttsAudioUrl,
+        uid: user?._id,
+        createdBy: user?.email,
+      });
 
-    // console.log(result);
-    setLoading(false);
+      setLastVideoId(resp); // Lưu lại id video vừa tạo để merge sau
+      setTtsText(formData.script);
+
+      const result = await axios.post('/api/generate_video_data', {
+        ...formData,
+        recordId: resp,
+        audioUrl: ttsAudioUrl,
+      });
+
+      // Dismiss the loading toast and show processing toast
+      toast.dismiss('video-creation');
+      toast.info('⚙️ Processing your video in the background...', {
+        position: 'top-right',
+        autoClose: 5000,
+      });
+    } catch (error) {
+      toast.dismiss('video-creation');
+      toast.error('Failed to start video generation. Please try again.', {
+        position: 'top-right',
+        autoClose: 5000,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Hàm gọi API merge audio vào video
@@ -109,7 +150,7 @@ function CreateNewVideo() {
   //   if (!ttsText) return;
   //   setTtsIsLoading(true);
   //   // Nếu trình duyệt hỗ trợ Web Speech API
-  //   if (window.speechSynthesis) { 
+  //   if (window.speechSynthesis) {
   //     const utter = new window.SpeechSynthesisUtterance(ttsText);
   //     utter.onend = () => setTtsIsLoading(false);
   //     window.speechSynthesis.speak(utter);
@@ -123,7 +164,7 @@ function CreateNewVideo() {
   // };
 
   useEffect(() => {
-    console.log("formData updated:", formData);
+    console.log('formData updated:', formData);
   }, [formData]);
 
   return (
@@ -148,7 +189,7 @@ function CreateNewVideo() {
             ttsIsLoading={ttsIsLoading}
             setTtsIsLoading={setTtsIsLoading}
           />
-          
+
           {/* Captions */}
           <Captions onHandleInputChange={onHandleInputChange} />
           <Button
@@ -156,9 +197,13 @@ function CreateNewVideo() {
             disabled={loading}
             onClick={GenerateVideo}
           >
-            {loading ? <Loader2Icon className="animate-spin" /> : <WandSparkles />}Generate Video
+            {loading ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <WandSparkles />
+            )}
+            Generate Video
           </Button>
-          
         </div>
         <div>
           <Preview formData={formData} />
