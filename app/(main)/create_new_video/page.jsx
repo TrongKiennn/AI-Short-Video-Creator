@@ -50,6 +50,7 @@ function CreateNewVideo() {
 
   const GenerateVideo = async () => {
     if (
+      !formData?.title.trim() ||
       !formData?.topic ||
       !formData?.script ||
       !formData.videoStyle ||

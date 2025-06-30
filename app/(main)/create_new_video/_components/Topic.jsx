@@ -130,7 +130,7 @@ function Topic({ onHandleInputChange }) {
 
         <Tabs defaultValue="suggestion" className="w-full mt-2">
           <TabsList>
-            <TabsTrigger value="suggestion">Trending keywords</TabsTrigger>
+            <TabsTrigger value="suggestion">Trending topics</TabsTrigger>
             <TabsTrigger value="your_topic">Your Topic</TabsTrigger>
           </TabsList>
           <TabsContent value="suggestion">

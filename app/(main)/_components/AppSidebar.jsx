@@ -70,7 +70,9 @@ function AppSidebar() {
           <SidebarGroupContent>
             <div className="mx-5 mt-10">
               <Link href={'/create_new_video'}>
-                <Button className="w-full">+ Create New Video</Button>
+                <Button className="w-full cursor-pointer">
+                  + Create New Video
+                </Button>
               </Link>
             </div>
             <SidebarMenu>
@@ -79,7 +81,7 @@ function AppSidebar() {
                   <SidebarMenuButton className="p-5">
                     <Link
                       href={menu.url}
-                      className="flex items-center gap-4 p-3"
+                      className="flex items-center gap-4 p-3 w-full"
                     >
                       <menu.icon />
                       <span>{menu?.title}</span>
