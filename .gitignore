@@ -42,3 +42,8 @@ next-env.d.ts
 
 # speech files
 *.wav
+
+# exported videos and temp files
+/public/exports/*.mp4
+/temp/
+*.mp4
