@@ -12,6 +12,7 @@ export async function POST(request) {
       audioUrl,
       imagesCount: images?.length,
       title,
+      imagesData: images, // Log the actual images data structure
     });
 
     if (!videoId || !audioUrl || !images || images.length === 0) {
@@ -45,35 +46,6 @@ export async function POST(request) {
     const tempDir = path.join(process.cwd(), 'temp', videoId);
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
-    }
-
-    // Download and save images locally
-    const imageFiles = [];
-    for (let i = 0; i < images.length; i++) {
-      const imageUrl = images[i];
-      const imagePath = path.join(
-        tempDir,
-        `image_${i.toString().padStart(3, '0')}.jpg`
-      );
-
-      try {
-        const response = await fetch(imageUrl);
-        const buffer = await response.arrayBuffer();
-        fs.writeFileSync(imagePath, Buffer.from(buffer));
-        imageFiles.push(imagePath);
-      } catch (error) {
-        console.error(`Failed to download image ${i}:`, error);
-        // Use a default image if download fails
-        const defaultImagePath = path.join(
-          process.cwd(),
-          'public',
-          'default.png'
-        );
-        if (fs.existsSync(defaultImagePath)) {
-          fs.copyFileSync(defaultImagePath, imagePath);
-          imageFiles.push(imagePath);
-        }
-      }
     }
 
     // Get audio file path (audio files are stored in public/ directory)
@@ -135,6 +107,62 @@ export async function POST(request) {
       `Audio duration: ${audioDuration}s, Images: ${images.length}, Duration per image: ${imageDuration}s`
     );
 
+    // Download and save images locally
+    const imageFiles = [];
+    for (let i = 0; i < images.length; i++) {
+      const imageUrl = images[i];
+      const imagePath = path.join(
+        tempDir,
+        `image_${i.toString().padStart(3, '0')}.jpg`
+      );
+
+      try {
+        // Handle both local files (starting with /) and full URLs
+        if (imageUrl.startsWith('/')) {
+          // Local file - copy from public directory
+          const localImagePath = path.join(
+            process.cwd(),
+            'public',
+            imageUrl.substring(1)
+          );
+          if (fs.existsSync(localImagePath)) {
+            fs.copyFileSync(localImagePath, imagePath);
+            imageFiles.push(imagePath);
+            console.log(
+              `Copied local image: ${localImagePath} -> ${imagePath}`
+            );
+          } else {
+            throw new Error(`Local image not found: ${localImagePath}`);
+          }
+        } else {
+          // External URL - fetch it
+          const response = await fetch(imageUrl);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${response.statusText}`);
+          }
+          const buffer = await response.arrayBuffer();
+          fs.writeFileSync(imagePath, Buffer.from(buffer));
+          imageFiles.push(imagePath);
+          console.log(`Downloaded external image: ${imageUrl} -> ${imagePath}`);
+        }
+      } catch (error) {
+        console.error(`Failed to process image ${i}:`, error);
+        // Use a default image if processing fails
+        const defaultImagePath = path.join(
+          process.cwd(),
+          'public',
+          'default.png'
+        );
+        if (fs.existsSync(defaultImagePath)) {
+          fs.copyFileSync(defaultImagePath, imagePath);
+          imageFiles.push(imagePath);
+          console.log(
+            `Used default image for ${i}: ${defaultImagePath} -> ${imagePath}`
+          );
+        }
+      }
+    }
+
     // Create video using FFmpeg
     const createVideo = () => {
       return new Promise((resolve, reject) => {
@@ -172,19 +200,23 @@ export async function POST(request) {
           audioPath,
           '-c:v',
           'libx264',
+          '-preset',
+          'medium', // Use medium preset for better quality
           '-c:a',
           'aac',
+          '-b:a',
+          '128k', // Set audio bitrate
           '-pix_fmt',
           'yuv420p',
-          '-color_range',
-          'tv', // Specify TV range to avoid deprecated pixel format warnings
+          '-movflags',
+          '+faststart', // Enable fast start for web playback
           '-shortest', // Stop when shortest input ends
           '-r',
           '30', // Output frame rate
           '-s',
           '1920x1080', // Output resolution
           '-vf',
-          "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,zoompan=z='min(zoom+0.0015,1.5)':d=125:x=iw/2-(iw/zoom/2):y=ih/2-(ih/zoom/2):s=1920x1080,format=yuv420p", // Add format filter to handle pixel format conversion properly
+          'scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2', // Video filter
           outputPath,
         ];
 
@@ -197,9 +229,22 @@ export async function POST(request) {
         ffmpeg.on('close', (code) => {
           console.log('FFmpeg process finished with code:', code);
           if (code === 0) {
-            // Cleanup temp directory
-            fs.rmSync(tempDir, { recursive: true, force: true });
-            resolve();
+            // Verify the output file was created and has content
+            if (fs.existsSync(outputPath)) {
+              const stats = fs.statSync(outputPath);
+              console.log(
+                `Output file created: ${outputPath}, size: ${stats.size} bytes`
+              );
+              if (stats.size > 0) {
+                // Cleanup temp directory
+                fs.rmSync(tempDir, { recursive: true, force: true });
+                resolve();
+              } else {
+                reject(new Error('Output file was created but is empty'));
+              }
+            } else {
+              reject(new Error('Output file was not created'));
+            }
           } else {
             reject(new Error(`FFmpeg process exited with code ${code}`));
           }

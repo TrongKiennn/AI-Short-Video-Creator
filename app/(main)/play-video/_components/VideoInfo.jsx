@@ -54,15 +54,10 @@ function VideoInfo({ videoData }) {
   };
 
   const handleYouTubeUpload = async () => {
-    // Check if video is already exported
-    let videoUrl = videoData?.videoUrl;
-
+    // Always export video first to ensure it exists
+    const videoUrl = await handleExportVideo();
     if (!videoUrl) {
-      // Export video first
-      videoUrl = await handleExportVideo();
-      if (!videoUrl) {
-        return; // Export failed
-      }
+      return; // Export failed
     }
 
     setIsUploading(true);
@@ -101,15 +96,18 @@ function VideoInfo({ videoData }) {
   };
 
   const handleDownload = async () => {
-    let videoUrl = videoData?.videoUrl;
-
+    // Always export the video first to ensure it exists
+    setIsExporting(true);
+    setUploadStatus('Exporting video...');
+    
+    const videoUrl = await handleExportVideo();
     if (!videoUrl) {
-      // Export video first
-      videoUrl = await handleExportVideo();
-      if (!videoUrl) {
-        return; // Export failed
-      }
+      setIsExporting(false);
+      return; // Export failed
     }
+
+    setIsExporting(false);
+    setUploadStatus('');
 
     // Create download link
     const link = document.createElement('a');
