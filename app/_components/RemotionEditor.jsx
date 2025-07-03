@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import {
   AbsoluteFill,
   Img,
@@ -10,16 +10,23 @@ import {
 } from 'remotion';
 import { VideoFrameContext } from '../_context/VideoFramesContext';
 
-function RemotionEditor({ videoData, setDurationInFrame }) {
-  const { frameList, setFrameList } = useContext(VideoFrameContext);
+function RemotionEditor({ videoData, setDurationInFrame, newAudio }) {
+  const { frameList } = useContext(VideoFrameContext);
   const [durationInFrames, setLocalDurationInFrames] = useState(100);
-  const getAudioDuration = (url) => {
+
+  const getAudioDuration = (urlOrFile) => {
     return new Promise((resolve, reject) => {
-      const audioElement = new window.Audio(url);
+      const source =
+        typeof urlOrFile === 'string'
+          ? urlOrFile
+          : URL.createObjectURL(urlOrFile);
+      const audioElement = new window.Audio(source);
       audioElement.addEventListener('loadedmetadata', () => {
+        if (typeof urlOrFile !== 'string') URL.revokeObjectURL(source);
         resolve(audioElement.duration);
       });
       audioElement.addEventListener('error', (e) => {
+        if (typeof urlOrFile !== 'string') URL.revokeObjectURL(source);
         reject('Unable to load audio: ' + e.message);
       });
     });
@@ -28,17 +35,21 @@ function RemotionEditor({ videoData, setDurationInFrame }) {
   const audioUrl = videoData?.audioUrl;
 
   const { fps } = useVideoConfig();
-  // const imageList=videoData?.images;
   const frame = useCurrentFrame();
+
   useEffect(() => {
-    videoData && getDurationFrame();
-  }, [videoData]);
+    if (videoData) getDurationFrame();
+  }, [videoData, newAudio]);
 
   const getDurationFrame = async () => {
+    const audioSource =
+      newAudio?.file ||
+      (audioUrl ? `${audioUrl}?v=${new Date().getTime()}` : null);
+    if (!audioSource) return 0;
+
     try {
-      const durationInSeconds = await getAudioDuration(audioUrl);
+      const durationInSeconds = await getAudioDuration(audioSource);
       const totalFrames = durationInSeconds * fps;
-      console.log('Total frame:', totalFrames);
       setLocalDurationInFrames(totalFrames);
       setDurationInFrame(totalFrames);
       return totalFrames;
@@ -47,6 +58,20 @@ function RemotionEditor({ videoData, setDurationInFrame }) {
       return 0;
     }
   };
+
+  const finalAudioSrc = useMemo(() => {
+    if (newAudio?.file) return URL.createObjectURL(newAudio.file);
+    if (audioUrl) return `${audioUrl}?v=${new Date().getTime()}`;
+    return null;
+  }, [newAudio, audioUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (finalAudioSrc && newAudio?.file) {
+        URL.revokeObjectURL(finalAudioSrc);
+      }
+    };
+  }, [finalAudioSrc, newAudio]);
 
   return (
     <div className="w-full h-full">
@@ -81,7 +106,7 @@ function RemotionEditor({ videoData, setDurationInFrame }) {
             </div>
           );
         })}
-        {videoData?.audioUrl && <Audio src={videoData.audioUrl} />}
+        {finalAudioSrc && <Audio src={finalAudioSrc} />}
       </AbsoluteFill>
     </div>
   );

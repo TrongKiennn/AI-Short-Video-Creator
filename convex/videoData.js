@@ -85,3 +85,16 @@ export const UpdateVideoImages=mutation({
         return result
     }
 })
+
+export const UpdateAudioUrl = mutation({
+    args: {
+        recordId: v.id('videoData'),
+        audioUrl: v.string(),
+    },
+    handler: async (ctx, args) => {
+        const result = await ctx.db.patch(args.recordId, {
+            audioUrl: args.audioUrl,
+        });
+        return result;
+    },
+});
