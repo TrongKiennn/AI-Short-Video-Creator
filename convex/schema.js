@@ -17,6 +17,7 @@ export default defineSchema({
     voice: v.string(),
     images: v.optional(v.any()),
     audioUrl: v.optional(v.string()),
+    videoUrl: v.optional(v.string()), // URL to the exported video file
     captionJSON: v.optional(v.any()),
     uid: v.id('users'),
     createdBy: v.string(),
