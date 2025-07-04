@@ -7,13 +7,7 @@ export async function POST(request) {
   try {
     const { videoId, audioUrl, images, title } = await request.json();
 
-    console.log('Export video request:', {
-      videoId,
-      audioUrl,
-      imagesCount: images?.length,
-      title,
-      imagesData: images, // Log the actual images data structure
-    });
+    console.log('Starting video export for:', videoId);
 
     if (!videoId || !audioUrl || !images || images.length === 0) {
       return NextResponse.json(
@@ -60,8 +54,6 @@ export async function POST(request) {
       throw new Error(`Audio file not found: ${audioPath}`);
     }
 
-    console.log('Using audio file:', audioPath);
-
     // Get audio duration using ffprobe
     const getDuration = () => {
       return new Promise((resolve, reject) => {
@@ -82,7 +74,6 @@ export async function POST(request) {
 
         ffprobe.on('close', (code) => {
           if (code === 0) {
-            console.log('Audio duration:', duration.trim(), 'seconds');
             resolve(parseFloat(duration.trim()));
           } else {
             reject(new Error('Failed to get audio duration'));
@@ -90,7 +81,6 @@ export async function POST(request) {
         });
 
         ffprobe.on('error', (error) => {
-          console.error('FFprobe error:', error.message);
           reject(
             new Error(
               `FFprobe command failed: ${error.message}. Make sure FFmpeg is installed and in your PATH.`
@@ -102,10 +92,6 @@ export async function POST(request) {
 
     const audioDuration = await getDuration();
     const imageDuration = audioDuration / images.length;
-
-    console.log(
-      `Audio duration: ${audioDuration}s, Images: ${images.length}, Duration per image: ${imageDuration}s`
-    );
 
     // Download and save images locally
     const imageFiles = [];
@@ -128,9 +114,6 @@ export async function POST(request) {
           if (fs.existsSync(localImagePath)) {
             fs.copyFileSync(localImagePath, imagePath);
             imageFiles.push(imagePath);
-            console.log(
-              `Copied local image: ${localImagePath} -> ${imagePath}`
-            );
           } else {
             throw new Error(`Local image not found: ${localImagePath}`);
           }
@@ -143,7 +126,6 @@ export async function POST(request) {
           const buffer = await response.arrayBuffer();
           fs.writeFileSync(imagePath, Buffer.from(buffer));
           imageFiles.push(imagePath);
-          console.log(`Downloaded external image: ${imageUrl} -> ${imagePath}`);
         }
       } catch (error) {
         console.error(`Failed to process image ${i}:`, error);
@@ -156,9 +138,6 @@ export async function POST(request) {
         if (fs.existsSync(defaultImagePath)) {
           fs.copyFileSync(defaultImagePath, imagePath);
           imageFiles.push(imagePath);
-          console.log(
-            `Used default image for ${i}: ${defaultImagePath} -> ${imagePath}`
-          );
         }
       }
     }
@@ -187,8 +166,6 @@ export async function POST(request) {
             // Continue to next path
           }
         }
-
-        console.log('Using ffmpeg path:', ffmpegPath);
 
         const ffmpegArgs = [
           '-y', // Overwrite output file
@@ -222,19 +199,11 @@ export async function POST(request) {
 
         const ffmpeg = spawn(ffmpegPath, ffmpegArgs);
 
-        ffmpeg.stderr.on('data', (data) => {
-          console.log('FFmpeg:', data.toString());
-        });
-
         ffmpeg.on('close', (code) => {
-          console.log('FFmpeg process finished with code:', code);
           if (code === 0) {
             // Verify the output file was created and has content
             if (fs.existsSync(outputPath)) {
               const stats = fs.statSync(outputPath);
-              console.log(
-                `Output file created: ${outputPath}, size: ${stats.size} bytes`
-              );
               if (stats.size > 0) {
                 // Cleanup temp directory
                 fs.rmSync(tempDir, { recursive: true, force: true });
@@ -251,7 +220,6 @@ export async function POST(request) {
         });
 
         ffmpeg.on('error', (error) => {
-          console.error('FFmpeg spawn error:', error.message);
           reject(
             new Error(
               `FFmpeg command failed: ${error.message}. Make sure FFmpeg is installed and in your PATH.`
@@ -262,7 +230,7 @@ export async function POST(request) {
     };
 
     await createVideo();
-    console.log(`Video exported successfully: ${outputPath}`);
+    console.log('Video export completed successfully');
     return NextResponse.json({
       success: true,
       videoUrl: `/exports/${videoId}.mp4`,

@@ -99,7 +99,7 @@ function VideoInfo({ videoData }) {
     // Always export the video first to ensure it exists
     setIsExporting(true);
     setUploadStatus('Exporting video...');
-    
+
     const videoUrl = await handleExportVideo();
     if (!videoUrl) {
       setIsExporting(false);

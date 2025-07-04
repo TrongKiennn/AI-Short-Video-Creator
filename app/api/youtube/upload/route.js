@@ -7,7 +7,13 @@ export async function POST(request) {
   try {
     const { videoPath, title, description, tags } = await request.json();
 
-    if (!videoPath || !title) {
+    console.log('Starting YouTube upload process');
+
+    // Fallback title if no title is provided
+    const finalTitle =
+      title && title.trim() ? title.trim() : 'My_AI_Created_Video';
+
+    if (!videoPath || !finalTitle) {
       return NextResponse.json(
         {
           error: 'Missing required fields: videoPath and title are required',
@@ -49,13 +55,11 @@ export async function POST(request) {
     const stats = fs.statSync(fullVideoPath);
     const fileSizeInBytes = stats.size;
 
-    console.log(`Uploading video: ${fullVideoPath} (${fileSizeInBytes} bytes)`);
-
     const uploadResponse = await youtube.videos.insert({
       part: ['snippet', 'status'],
       requestBody: {
         snippet: {
-          title: title,
+          title: finalTitle,
           description:
             description ||
             `Generated with AI Video Creator\n\nTags: ${tags?.join(', ') || 'AI Generated Video'}`,
@@ -77,7 +81,7 @@ export async function POST(request) {
     const videoId = uploadResponse.data.id;
     const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
-    console.log(`Video uploaded successfully: ${videoUrl}`);
+    console.log('YouTube upload completed successfully');
 
     return NextResponse.json({
       success: true,

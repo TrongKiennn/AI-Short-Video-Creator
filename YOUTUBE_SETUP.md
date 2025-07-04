@@ -72,15 +72,17 @@ Both commands should return version information. If you get "command not found" 
 
 6. **Add Test Users** (if not part of an organization):
 
-   - Go to "APIs & Services" > "OAuth consent screen"
+   - Go to "APIs & Services" > "OAuth consent screen" > "Audience" on the panel
    - In the "Test users" section, click "ADD USERS"
-   - Add your development Gmail address that you'll use for testing
+   - **Important**: Add the Gmail address that owns the YouTube channel where you want to upload videos
+   - This Gmail account must be the same one you'll use for authentication
+   - You cannot authenticate with Gmail A and upload to a YouTube channel owned by Gmail B
    - This is required for personal/unverified apps to access YouTube API
 
 7. **Get a refresh token**:
    - Start your development server: `npm run dev`
    - Visit `http://localhost:3000/api/youtube/auth`
-   - Authorize the application with the Gmail account you added as a test user
+   - **Authorize with the same Gmail account** that you added as a test user and that owns your target YouTube channel
    - Copy the `refresh_token` from the response
    - Add it to your `.env.local`:
      ```env
@@ -111,6 +113,21 @@ When you click "Upload to YouTube":
 ### Manual Process
 
 You can also export videos manually using the "Export & Download" button.
+
+## Important Notes
+
+### Authentication and Channel Ownership
+
+- **The Gmail account used for authentication must own the YouTube channel** where videos will be uploaded
+- You cannot authenticate with one Gmail account and upload to a different account's YouTube channel
+- Each refresh token is tied to a specific Google/Gmail account
+- If you want to upload to multiple YouTube channels owned by different accounts, you'll need separate API projects and refresh tokens for each account
+
+### Video Privacy Settings
+
+- Videos are uploaded as "private" by default for safety
+- You can manually change them to "public" or "unlisted" on YouTube after upload
+- This prevents accidental public uploads during testing
 
 ## Features
 
