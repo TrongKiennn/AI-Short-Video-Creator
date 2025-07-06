@@ -5,11 +5,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { useAuthContext } from '@/app/provider';
 
 function VideoInfo({ videoData }) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
   const [isExporting, setIsExporting] = useState(false);
+  const { user } = useAuthContext();
 
   const updateVideoUrl = useMutation(api.videoData.UpdateVideoUrl);
 
@@ -54,6 +56,12 @@ function VideoInfo({ videoData }) {
   };
 
   const handleYouTubeUpload = async () => {
+    // Check if user is authenticated
+    if (!user?.email) {
+      alert('You must be logged in to upload to YouTube.');
+      return;
+    }
+
     // Always export video first to ensure it exists
     const videoUrl = await handleExportVideo();
     if (!videoUrl) {
@@ -75,6 +83,7 @@ function VideoInfo({ videoData }) {
           'Short Video',
           'Automated Content',
         ],
+        userEmail: user.email,
       });
 
       if (response.data.success) {

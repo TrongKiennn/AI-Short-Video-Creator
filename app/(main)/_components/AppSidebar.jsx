@@ -21,6 +21,7 @@ import {
   WalletCards,
 } from 'lucide-react';
 import Link from 'next/link';
+import LogoutButton from '@/app/_components/LogoutButton';
 
 const MenuItems = [
   {
@@ -95,7 +96,11 @@ function AppSidebar() {
 
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <div className="p-3">
+          <LogoutButton />
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }

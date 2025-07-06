@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server';
-import { getYouTubeClient, refreshAccessToken } from '@/configs/youtubeConfig';
+import {
+  getYouTubeClient,
+  refreshAccessToken,
+  setupOAuthForUser,
+} from '@/configs/youtubeConfig';
 import fs from 'fs';
 import path from 'path';
 
 export async function POST(request) {
   try {
-    const { videoPath, title, description, tags } = await request.json();
+    const { videoPath, title, description, tags, userEmail } =
+      await request.json();
 
     console.log('Starting YouTube upload process');
 
@@ -22,8 +27,29 @@ export async function POST(request) {
       );
     }
 
+    if (!userEmail) {
+      return NextResponse.json(
+        {
+          error: 'User email is required for YouTube upload',
+        },
+        { status: 400 }
+      );
+    }
+
+    // Set up OAuth for the specific user and refresh access token
+    const setupSuccess = await setupOAuthForUser(userEmail);
+    if (!setupSuccess) {
+      return NextResponse.json(
+        {
+          error:
+            'No YouTube authorization found for this user. Please connect your YouTube account first.',
+        },
+        { status: 401 }
+      );
+    }
+
     // Refresh access token to ensure we have a valid token
-    await refreshAccessToken();
+    await refreshAccessToken(userEmail);
 
     const youtube = getYouTubeClient();
 

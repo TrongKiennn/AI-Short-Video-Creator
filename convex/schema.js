@@ -29,4 +29,15 @@ export default defineSchema({
     expiresAt: v.number(),
     createdAt: v.number(),
   }).index('by_key', ['cacheKey']),
+  youtubeTokens: defineTable({
+    userId: v.id('users'),
+    email: v.string(),
+    refreshToken: v.string(),
+    accessToken: v.optional(v.string()),
+    expiresAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_user', ['userId'])
+    .index('by_email', ['email']),
 });
