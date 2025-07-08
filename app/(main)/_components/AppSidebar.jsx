@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Button } from '@/components/ui/button'
-import { HomeIcon, LucideFileVideo, Menu, Search, WalletCards } from 'lucide-react'
+import { HomeIcon, LucideAreaChart, LucideAudioLines, LucideFileVideo, Menu, Search, WalletCards } from 'lucide-react'
 import Link from 'next/link'
 
 const MenuItems=[
@@ -24,28 +24,28 @@ const MenuItems=[
   },
   {
     title:"Create New Video",
-    url:'/#',
+    url:'/create_new_video',
     icon: LucideFileVideo
   },
   {
     title:"Text to Speech",
     url:'/texttospeech',
-    icon: LucideFileVideo
+    icon: LucideAudioLines
   },
   {
     title:"Exflore",
     url:'/#',
     icon: Search
   }, 
+  // {
+  //   title:"Billing",
+  //   url:'/#',
+  //   icon: WalletCards
+  // },
   {
-    title:"Billing",
-    url:'/#',
-    icon: WalletCards
-  },
-  {
-    title: "Thống kê Video YouTube",
+    title: "Video Performance Statistics",
     url: "/video-stats",
-    icon: LucideFileVideo
+    icon: LucideAreaChart
   },
 ]
 
@@ -53,14 +53,17 @@ function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div>
-          <div className='flex items-center gap-3 w-full justify-center mt-5'>
-            <Image src={'/logo.svg'} alt='logo' width={40} height={40}/>
-            <h2 className='font-bold text-2xl'>Video Gen</h2>
-          </div>
+        <Link  href={'/dashboard'}>
+          <div>
+            <div className='flex items-center gap-3 w-full justify-center mt-5'>
+              <Image src={'/logo.svg'} alt='logo' width={40} height={40}/>
+              <h2 className='font-bold text-2xl'>Video Gen</h2>
+            </div>
 
-          <h2 className='text-lg text-gray-400 text-center mt-3'>AI Short Video Generator</h2>
-        </div>
+            <h2 className='text-lg text-gray-400 text-center mt-3'>AI Short Video Generator</h2>
+          </div>
+        </Link>
+        
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
