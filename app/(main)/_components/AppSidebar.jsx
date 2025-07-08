@@ -42,6 +42,11 @@ const MenuItems=[
     url:'/#',
     icon: WalletCards
   },
+  {
+    title: "Thống kê Video YouTube",
+    url: "/video-stats",
+    icon: LucideFileVideo
+  },
 ]
 
 function AppSidebar() {
