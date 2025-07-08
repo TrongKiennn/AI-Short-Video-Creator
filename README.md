@@ -28,7 +28,7 @@ docker compose up
 ## 📝 4. Cấu hình biến môi trường
 
 Mở file `.env.local` và chỉnh sửa các giá trị theo yêu cầu.  
-**Lưu ý:** Sau này bạn sẽ cần cập nhật `ADMIN_KEY` trong file này sau khi khởi tạo.
+**Lưu ý:** Sau này bạn sẽ cần cập nhật `ADMIN_KEY` trong file `.env.local` sau khi khởi tạo.
 
 ## 🔑 5. Tạo khóa quản trị viên (Admin Key)
 
@@ -80,8 +80,17 @@ npm run dev
 ```
 
 Ứng dụng sẽ được khởi động tại địa chỉ mặc định:  
-[http://localhost:3000](http://localhost:3000) *(hoặc tùy thuộc cấu hình)*
+[http://localhost:3000](http://localhost:3000) _(hoặc tùy thuộc cấu hình)_
 
----
+<b>Sau lần cài đặt đầu tiên, để chạy chương trình một cách cục bộ, chỉ cần chạy 4 lệnh sau, mỗi lệnh ở một terminal riêng
+
+```bash
+docker compose up
+npx convex dev
+npx inngest-cli dev
+npm run dev
+```
+
+</b>
 
 ✅ **Chúc bạn chạy dự án thành công!**

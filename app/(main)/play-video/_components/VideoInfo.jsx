@@ -16,8 +16,17 @@ function VideoInfo({videoData}) {
         <h2 className='mt-5'>Project Name: {videoData?.title}</h2>
         <p className='text-gray-500'>Script: {videoData?.script}</p>
         <h2>Video Style: {videoData?.videoStyle}</h2>
-
-        <Button><DownloadIcon/>Export & Download</Button>
+        <div className='flex justify-between items-center mt-3'>
+          <Link href={`/edit-video/${videoData?._id}`}>
+            <Button>Edit Video</Button>
+          </Link>
+          
+          <Button>
+            <DownloadIcon />
+            Export & Download
+          </Button>
+        </div>
+        
       </div>
     </div>
   )
