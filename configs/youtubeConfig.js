@@ -12,13 +12,9 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.YOUTUBE_REDIRECT_URI || 'http://localhost:3000/api/youtube/auth'
 );
 
-// Only set refresh token from environment if no user-specific token is available
-// This is for backward compatibility only
-if (process.env.YOUTUBE_REFRESH_TOKEN) {
-  oauth2Client.setCredentials({
-    refresh_token: process.env.YOUTUBE_REFRESH_TOKEN,
-  });
-}
+// Note: We don't set environment refresh token globally anymore
+// This ensures YouTube connection status is only based on user-specific tokens
+// Environment token is only used as fallback in setupOAuthForUser() function
 
 export const getAuthUrl = (state = null) => {
   const authUrlOptions = {
@@ -120,6 +116,23 @@ export const refreshAccessToken = async (email = null) => {
     return credentials;
   } catch (error) {
     console.error('Error refreshing access token:', error);
+
+    // If refresh fails, the refresh token might be invalid
+    // In this case, we should remove the token from database
+    if (
+      email &&
+      (error.code === 400 || error.message.includes('invalid_grant'))
+    ) {
+      try {
+        console.log('Refresh token appears invalid, removing from database');
+        await convex.mutation(api.youtubeTokens.removeYouTubeToken, {
+          email: email,
+        });
+      } catch (cleanupError) {
+        console.error('Error removing invalid token:', cleanupError);
+      }
+    }
+
     throw error;
   }
 };
@@ -129,3 +142,27 @@ export const getYouTubeClient = (email = null) => {
 };
 
 export { oauth2Client };
+
+// Check if a token is still valid
+export const isTokenValid = (token) => {
+  if (!token) return false;
+
+  // Must have a refresh token (these don't expire)
+  if (!token.refreshToken || !token.refreshToken.trim()) {
+    return false;
+  }
+
+  // Check if access token is expired (if we have one)
+  if (token.expiresAt && token.accessToken) {
+    const now = Date.now();
+    const isAccessTokenValid = token.expiresAt > now;
+
+    // If access token is expired, we need to refresh it
+    // But the overall token is still valid if we have a refresh token
+    return true;
+  }
+
+  // If we don't have an access token or expiry, but we have a refresh token
+  // the token is still valid, we just need to refresh it
+  return true;
+};

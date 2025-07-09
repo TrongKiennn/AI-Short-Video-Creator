@@ -10,9 +10,12 @@ function LogoutButton() {
 
   const handleLogout = async () => {
     try {
+      console.log('Logging out user and clearing YouTube connection');
       await signOut(auth);
       // Clear any session storage
       sessionStorage.removeItem('pendingYouTubeAuth');
+      // Clear any local storage that might affect state
+      localStorage.removeItem('youtubeConnected');
       // Redirect to home page
       router.push('/');
     } catch (error) {
