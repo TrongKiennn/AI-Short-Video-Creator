@@ -1,51 +1,9 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useAuthContext } from '@/app/provider';
 
 function YouTubeConnectionStatus() {
   const { user, youtubeConnected } = useAuthContext();
-  const [isConnecting, setIsConnecting] = useState(false);
-
-  const connectYouTube = async () => {
-    if (!user?._id) return;
-
-    setIsConnecting(true);
-    try {
-      const response = await fetch('/api/youtube/connect', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user._id,
-          email: user.email,
-          displayName: user.displayName,
-        }),
-      });
-
-      if (response.ok) {
-        const { authUrl } = await response.json();
-        window.location.href = authUrl;
-      } else {
-        const error = await response.json();
-        console.error('YouTube connect error:', error);
-        setIsConnecting(false);
-      }
-    } catch (error) {
-      console.error('YouTube connection error:', error);
-      setIsConnecting(false);
-    }
-  };
-
-  // Check URL parameters for connection status
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('youtube_connected') === 'true') {
-      // Clean up the URL
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
-    }
-  }, []);
 
   if (!user) {
     return null;
@@ -60,23 +18,14 @@ function YouTubeConnectionStatus() {
           }`}
         />
         <span className="text-sm font-medium">
-          YouTube: {youtubeConnected ? 'Connected' : 'Not Connected'}
+          YouTube:{' '}
+          {youtubeConnected ? 'Ready to upload videos' : 'Not ready to upload'}
         </span>
       </div>
 
       {!youtubeConnected && (
-        <button
-          onClick={connectYouTube}
-          disabled={isConnecting}
-          className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:opacity-50"
-        >
-          {isConnecting ? 'Connecting...' : 'Connect YouTube'}
-        </button>
-      )}
-
-      {youtubeConnected && (
-        <span className="text-sm text-green-600 dark:text-green-400">
-          Ready to upload videos
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          Sign in to YouTube in sidebar to upload videos
         </span>
       )}
     </div>

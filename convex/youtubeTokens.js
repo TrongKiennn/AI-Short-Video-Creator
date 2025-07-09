@@ -117,3 +117,22 @@ export const deleteYouTubeToken = mutation({
     return false;
   },
 });
+
+// Remove YouTube token by email (for disconnect functionality)
+export const removeYouTubeToken = mutation({
+  args: {
+    email: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const token = await ctx.db
+      .query('youtubeTokens')
+      .withIndex('by_email', (q) => q.eq('email', args.email))
+      .first();
+
+    if (token) {
+      await ctx.db.delete(token._id);
+      return true;
+    }
+    return false;
+  },
+});

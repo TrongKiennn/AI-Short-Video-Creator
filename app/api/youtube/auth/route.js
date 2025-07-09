@@ -15,7 +15,10 @@ export async function GET(request) {
   if (error) {
     console.error('OAuth error:', error);
     return NextResponse.redirect(
-      new URL('/?youtube_error=' + encodeURIComponent(error), request.url)
+      new URL(
+        '/dashboard?youtube_error=' + encodeURIComponent(error),
+        request.url
+      )
     );
   }
 
@@ -74,14 +77,14 @@ export async function GET(request) {
             userInfo.email
           );
 
-          // Redirect back to the app with success
+          // Redirect back to the dashboard with success
           return NextResponse.redirect(
-            new URL('/?youtube_connected=true', request.url)
+            new URL('/dashboard?youtube_connected=true', request.url)
           );
         } else {
           console.error('Could not determine user ID for token storage');
           return NextResponse.redirect(
-            new URL('/?youtube_error=user_not_found', request.url)
+            new URL('/dashboard?youtube_error=user_not_found', request.url)
           );
         }
       } else {
@@ -100,7 +103,7 @@ export async function GET(request) {
       console.error('YouTube auth error:', error);
       return NextResponse.redirect(
         new URL(
-          '/?youtube_error=' + encodeURIComponent(error.message),
+          '/dashboard?youtube_error=' + encodeURIComponent(error.message),
           request.url
         )
       );

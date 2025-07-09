@@ -6,16 +6,16 @@ This guide shows how to set up YouTube integration for your AI Short Video Creat
 
 ## Prerequisites
 
-You need to have **FFmpeg** installed on your system for video processing:
+You need to have **FFmpeg** installed on your system (the server on which the app will be running) for video processing:
 
 ### Windows
 
 1. Download FFmpeg from https://ffmpeg.org/download.html
 2. Extract to a folder (e.g., `C:\ffmpeg`)
-3. Add `C:\ffmpeg\bin` to your system **PATH environment variable**:
+3. Add the `bin` folder (e.g., `C:\ffmpeg\bin`) to your system **PATH environment variable**:
    - Open System Properties → Environment Variables
    - Edit the "Path" variable in System Variables
-   - Add `C:\ffmpeg\bin` to the list
+   - Add `your-absolute-path\ffmpeg\bin`to the list
    - Click OK and restart your terminal/IDE
 
 ### macOS

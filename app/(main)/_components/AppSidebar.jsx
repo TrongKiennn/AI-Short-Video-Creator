@@ -22,6 +22,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import LogoutButton from '@/app/_components/LogoutButton';
+import YouTubeSignInButton from '@/app/_components/YouTubeSignInButton';
+import YouTubeStatusIndicator from '@/app/_components/YouTubeStatusIndicator';
+import { useAuthContext } from '@/app/provider';
 
 const MenuItems = [
   {
@@ -52,6 +55,8 @@ const MenuItems = [
 ];
 
 function AppSidebar() {
+  const { youtubeConnected } = useAuthContext();
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -97,7 +102,9 @@ function AppSidebar() {
         <SidebarGroup />
       </SidebarContent>
       <SidebarFooter>
-        <div className="p-3">
+        <div className="p-3 space-y-2">
+          <YouTubeStatusIndicator />
+          <YouTubeSignInButton />
           <LogoutButton />
         </div>
       </SidebarFooter>

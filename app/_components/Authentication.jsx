@@ -11,31 +11,24 @@ function Authentication({ children }) {
 
   const provider = new GoogleAuthProvider();
 
-  // Add YouTube scope for seamless OAuth
-  provider.addScope('https://www.googleapis.com/auth/youtube.upload');
-
   const onSignInClick = async () => {
     if (user) {
-      // User is already signed in, just connect YouTube
-      await connectYouTube(user);
+      // User is already signed in, no need to sign in again
       return;
     }
 
     try {
       setAuthStep('firebase');
 
-      // First, sign in with Firebase
+      // Only sign in with Firebase/Gmail
       const result = await signInWithPopup(auth, provider);
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
       const firebaseUser = result.user;
 
       console.log('Firebase auth successful:', firebaseUser);
 
-      // Wait a moment for the provider to update the user context
-      setTimeout(async () => {
-        await connectYouTube(firebaseUser);
-      }, 500);
+      // Reset auth step after successful Firebase auth
+      setAuthStep('firebase');
+      setIsConnectingYouTube(false);
     } catch (error) {
       console.error('Authentication error:', error);
       setAuthStep('firebase');
@@ -47,92 +40,6 @@ function Authentication({ children }) {
       } else if (error.code === 'auth/popup-blocked') {
         console.log('Popup was blocked');
       }
-    }
-  };
-
-  const connectYouTube = async (firebaseUser) => {
-    if (!firebaseUser) return;
-
-    setAuthStep('youtube');
-    setIsConnectingYouTube(true);
-
-    try {
-      // Get the user's Convex ID from the context or wait for it
-      let convexUser = user;
-
-      // If user context is not ready, wait a bit and try again
-      if (!convexUser?._id) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        convexUser = user;
-      }
-
-      if (!convexUser?._id) {
-        console.error('Convex user ID not found, retrying...');
-        // Try to get user from Firebase directly
-        const tempUser = {
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-        };
-
-        // Call connect API without userId for now
-        const response = await fetch('/api/youtube/connect', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-          }),
-        });
-
-        if (response.ok) {
-          const { authUrl } = await response.json();
-          // Store user info in sessionStorage for the callback
-          sessionStorage.setItem(
-            'pendingYouTubeAuth',
-            JSON.stringify({
-              email: firebaseUser.email,
-              displayName: firebaseUser.displayName,
-              firebaseUid: firebaseUser.uid,
-            })
-          );
-          window.location.href = authUrl;
-        } else {
-          const error = await response.json();
-          console.error('YouTube connect error:', error);
-          setIsConnectingYouTube(false);
-          setAuthStep('firebase');
-        }
-        return;
-      }
-
-      // Call the connect API to get the YouTube auth URL
-      const response = await fetch('/api/youtube/connect', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: convexUser._id,
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-        }),
-      });
-
-      if (response.ok) {
-        const { authUrl } = await response.json();
-        window.location.href = authUrl;
-      } else {
-        const error = await response.json();
-        console.error('YouTube connect error:', error);
-        setIsConnectingYouTube(false);
-        setAuthStep('firebase');
-      }
-    } catch (error) {
-      console.error('YouTube connection error:', error);
-      setIsConnectingYouTube(false);
-      setAuthStep('firebase');
     }
   };
 
@@ -158,8 +65,6 @@ function Authentication({ children }) {
     switch (authStep) {
       case 'firebase':
         return 'Signing in with Google...';
-      case 'youtube':
-        return 'Connecting to YouTube...';
       case 'complete':
         return 'Successfully connected!';
       default:
@@ -169,7 +74,7 @@ function Authentication({ children }) {
 
   return (
     <div onClick={onSignInClick} style={{ position: 'relative' }}>
-      {(isConnectingYouTube || authStep !== 'firebase') && (
+      {(isConnectingYouTube || authStep === 'complete') && (
         <div
           style={{
             position: 'absolute',

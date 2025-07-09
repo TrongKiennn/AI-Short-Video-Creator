@@ -17,7 +17,7 @@ function Provider({ children }) {
   const [youtubeConnected, setYoutubeConnected] = useState(false);
   const CreateUser = useMutation(api.users.CreateNewUser);
 
-  // Query YouTube connection status
+  // Query YouTube connection status - only when user is available
   const youtubeToken = useQuery(
     api.youtubeTokens.getYouTubeToken,
     user?._id ? { userId: user._id } : 'skip'
@@ -49,10 +49,32 @@ function Provider({ children }) {
 
   // Update YouTube connection status when token data changes
   useEffect(() => {
-    if (youtubeToken !== undefined) {
-      setYoutubeConnected(!!youtubeToken);
+    console.log('Provider: YouTube token check', {
+      hasUser: !!user?._id,
+      userId: user?._id,
+      youtubeToken: youtubeToken,
+      isUndefined: youtubeToken === undefined,
+    });
+
+    if (user?._id) {
+      if (youtubeToken !== undefined) {
+        // Only set as connected if there's a user-specific token
+        const connected = !!youtubeToken;
+        console.log('Provider: Setting YouTube connected status:', connected);
+        setYoutubeConnected(connected);
+      } else {
+        // If we have a user but no token data yet, wait for the query
+        console.log(
+          'Provider: User exists but no token data yet, setting false'
+        );
+        setYoutubeConnected(false);
+      }
+    } else {
+      // No user, definitely not connected
+      console.log('Provider: No user, setting YouTube connected to false');
+      setYoutubeConnected(false);
     }
-  }, [youtubeToken]);
+  }, [youtubeToken, user?._id]);
 
   return (
     <div>

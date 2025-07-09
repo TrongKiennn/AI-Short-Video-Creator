@@ -11,7 +11,7 @@ function VideoInfo({ videoData }) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
   const [isExporting, setIsExporting] = useState(false);
-  const { user } = useAuthContext();
+  const { user, youtubeConnected } = useAuthContext();
 
   const updateVideoUrl = useMutation(api.videoData.UpdateVideoUrl);
 
@@ -62,7 +62,7 @@ function VideoInfo({ videoData }) {
       return;
     }
 
-    // Always export video first to ensure it exists
+    // Always try to export video first
     const videoUrl = await handleExportVideo();
     if (!videoUrl) {
       return; // Export failed
@@ -97,7 +97,46 @@ function VideoInfo({ videoData }) {
       setUploadStatus('Upload failed');
       const errorMessage =
         error.response?.data?.error || 'Unknown error occurred';
-      alert(`Failed to upload to YouTube: ${errorMessage}`);
+
+      // Check if the error is related to YouTube authentication or no authorization
+      if (
+        errorMessage.includes('authentication') ||
+        errorMessage.includes('token') ||
+        errorMessage.includes('unauthorized') ||
+        errorMessage.includes('No YouTube authorization found') ||
+        errorMessage.includes('connect your YouTube account')
+      ) {
+        const shouldConnect = confirm(
+          'YouTube authentication failed or not connected. You need to connect your YouTube account first. Would you like to connect now?'
+        );
+        if (shouldConnect) {
+          try {
+            const response = await fetch('/api/youtube/connect', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                userId: user._id,
+                email: user.email,
+                displayName: user.displayName,
+              }),
+            });
+
+            if (response.ok) {
+              const { authUrl } = await response.json();
+              window.location.href = authUrl;
+            } else {
+              alert('Failed to connect to YouTube. Please try again.');
+            }
+          } catch (connectError) {
+            console.error('YouTube connection error:', connectError);
+            alert('Failed to connect to YouTube. Please try again.');
+          }
+        }
+      } else {
+        alert(`Failed to upload to YouTube: ${errorMessage}`);
+      }
     } finally {
       setIsUploading(false);
       setTimeout(() => setUploadStatus(''), 5000); // Clear status after 5 seconds
