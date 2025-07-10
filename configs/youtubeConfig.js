@@ -147,7 +147,7 @@ export { oauth2Client };
 export const isTokenValid = (token) => {
   if (!token) return false;
 
-  // Must have a refresh token (these don't expire)
+  // Must have a refresh token (these take much longer toexpire)
   if (!token.refreshToken || !token.refreshToken.trim()) {
     return false;
   }

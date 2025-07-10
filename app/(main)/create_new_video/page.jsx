@@ -17,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'react-toastify';
 import { useVideoStatusPolling } from '@/hooks/useVideoStatusPolling';
 
-function CreateNewVideo() {
+function NewVideoCreator() {
   const [formData, setFormData] = useState({});
   const CreateInitialVideoRecord = useMutation(api.videoData.CreateVideoData);
   const { user } = useAuthContext();
@@ -50,7 +50,7 @@ function CreateNewVideo() {
 
   const GenerateVideo = async () => {
     if (
-      !formData?.title.trim() ||
+      !formData?.title?.trim() ||
       !formData?.topic ||
       !formData?.script ||
       !formData.videoStyle ||
@@ -214,4 +214,4 @@ function CreateNewVideo() {
   );
 }
 
-export default CreateNewVideo;
+export default NewVideoCreator;

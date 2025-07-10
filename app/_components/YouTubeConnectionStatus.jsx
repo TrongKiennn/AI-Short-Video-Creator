@@ -17,10 +17,15 @@ function YouTubeConnectionStatus() {
             youtubeConnected ? 'bg-green-500' : 'bg-red-500'
           }`}
         />
-        <span className="text-sm font-medium">
+        <span className="text-lg font-medium">
           YouTube:{' '}
           {youtubeConnected ? 'Ready to upload videos' : 'Not ready to upload'}
         </span>
+        {youtubeConnected && user.email && (
+          <span className="text-sm text-green-300 font-bold">
+            ({user.email})
+          </span>
+        )}
       </div>
 
       {!youtubeConnected && (
