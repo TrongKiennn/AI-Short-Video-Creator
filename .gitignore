@@ -42,3 +42,5 @@ next-env.d.ts
 
 # speech files
 *.wav
+
+exports/
