@@ -31,7 +31,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env.local
 
 # vercel
 .vercel
@@ -40,12 +40,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# speech files
+# generated speech files
 *.wav
-# Generated files
 
-# Auto-generated videos when exporting
-exports/
+# exported videos and temp files
+/public/exports/*.mp4
+/temp/
 
-# Auto-generated convex files
+# auto-generated convex files
 convex/_generated/

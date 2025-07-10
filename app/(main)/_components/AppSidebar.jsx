@@ -1,5 +1,5 @@
-import React from 'react'
-import Image from 'next/image'
+import React from 'react';
+import Image from 'next/image';
 
 import {
   Sidebar,
@@ -11,74 +11,94 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Button } from '@/components/ui/button'
-import { HomeIcon, LucideAreaChart, LucideAudioLines, LucideFileVideo, Menu, Search, WalletCards } from 'lucide-react'
-import Link from 'next/link'
+} from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
+import {
+  HomeIcon,
+  LucideAreaChart,
+  LucideAudioLines,
+  LucideFileVideo,
+  Menu,
+  Search,
+  WalletCards,
+} from 'lucide-react';
+import Link from 'next/link';
+import LogoutButton from '@/app/_components/LogoutButton';
+import YouTubeSignInButton from '@/app/_components/YouTubeSignInButton';
+import YouTubeStatusIndicator from '@/app/_components/YouTubeStatusIndicator';
+import { useAuthContext } from '@/app/provider';
 
-const MenuItems=[
+const MenuItems = [
   {
-    title:"Home",
-    url:'/dashboard',
-    icon: HomeIcon
+    title: 'Home',
+    url: '/dashboard',
+    icon: HomeIcon,
   },
   {
-    title:"Create New Video",
-    url:'/create_new_video',
-    icon: LucideFileVideo
+    title: 'Create New Video',
+    url: '/create_new_video',
+    icon: LucideFileVideo,
   },
   {
-    title:"Text to Speech",
-    url:'/texttospeech',
-    icon: LucideAudioLines
+    title: 'Text to Speech',
+    url: '/texttospeech',
+    icon: LucideAudioLines,
   },
   {
-    title:"Exflore",
-    url:'/#',
-    icon: Search
-  }, 
+    title: 'Explore',
+    url: '/#',
+    icon: Search,
+  },
   // {
-  //   title:"Billing",
-  //   url:'/#',
-  //   icon: WalletCards
+  //   title: 'Billing',
+  //   url: '/#',
+  //   icon: WalletCards,
   // },
   {
-    title: "Video Performance Statistics",
-    url: "/video-stats",
-    icon: LucideAreaChart
+    title: 'Video Performance Statistics',
+    url: '/video-stats',
+    icon: LucideAreaChart,
   },
-]
+];
 
 function AppSidebar() {
+  const { youtubeConnected } = useAuthContext();
+
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link  href={'/dashboard'}>
+        <Link href={'/dashboard'}>
           <div>
-            <div className='flex items-center gap-3 w-full justify-center mt-5'>
-              <Image src={'/logo.svg'} alt='logo' width={40} height={40}/>
-              <h2 className='font-bold text-2xl'>Video Gen</h2>
+            <div className="flex items-center gap-3 w-full justify-center mt-5">
+              <Image src={'/logo.svg'} alt="logo" width={40} height={40} />
+              <h2 className="font-bold text-2xl">Video Generator</h2>
             </div>
 
-            <h2 className='text-lg text-gray-400 text-center mt-3'>AI Short Video Generator</h2>
+            <h2 className="text-lg text-gray-400 text-center mt-3">
+              AI Short Video Generator
+            </h2>
           </div>
         </Link>
-        
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <div className='mx-5 mt-10'>
+            <div className="mx-5 mt-10">
               <Link href={'/create_new_video'}>
-              <Button className="w-full">+ Create New Video</Button>
+                <Button className="w-full cursor-pointer">
+                  + Create New Video
+                </Button>
               </Link>
             </div>
             <SidebarMenu>
-              {MenuItems.map((menu,index)=>(
+              {MenuItems.map((menu, index) => (
                 <SidebarMenuItem className="mt-3" key={index}>
                   <SidebarMenuButton className="p-5">
-                    <Link href={menu.url} className='flex items-center gap-4 p-3'>
-                      <menu.icon/>
+                    <Link
+                      href={menu.url}
+                      className="flex items-center gap-4 p-3 w-full"
+                    >
+                      <menu.icon />
                       <span>{menu?.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -90,9 +110,15 @@ function AppSidebar() {
 
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <div className="p-3 space-y-2">
+          <YouTubeStatusIndicator />
+          <YouTubeSignInButton />
+          <LogoutButton />
+        </div>
+      </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
 
-export default AppSidebar
+export default AppSidebar;

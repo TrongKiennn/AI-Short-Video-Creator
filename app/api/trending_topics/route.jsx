@@ -125,7 +125,7 @@ export async function GET() {
       if (serpApiKey) {
         fetchPromises.push(
           fetch(
-            `https://serpapi.com/search.json?engine=google_trends_trending_now&geo=VN&hours=4&api_key=${serpApiKey}`
+            `https://serpapi.com/search.json?engine=google_trends_trending_now&geo=US&hours=4&api_key=${serpApiKey}`
           )
             .then(async (serpResponse) => {
               if (serpResponse.ok) {
@@ -177,7 +177,7 @@ export async function GET() {
       if (newsApiKey) {
         fetchPromises.push(
           fetch(
-            `https://newsapi.org/v2/top-headlines?country=us&apiKey=${newsApiKey}`
+            `https://newsapi.org/v2/top-headlines?country=US&apiKey=${newsApiKey}`
           )
             .then(async (newsResponse) => {
               if (newsResponse.ok) {
@@ -186,7 +186,7 @@ export async function GET() {
                 // Extract raw headlines first
                 const headlines =
                   newsData.articles
-                    ?.slice(0, 20) // Take at most 20 crude headlines
+                    ?.slice(0, 25) // Take at most 25 crude headlines
                     ?.map((article) => article.title)
                     ?.filter((title) => title && title.length > 10) || [];
 
