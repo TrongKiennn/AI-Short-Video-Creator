@@ -119,7 +119,7 @@ function Topic({ onHandleInputChange }) {
 
   return (
     <div>
-      <h2 className="mb-1">Project Title</h2>
+      <h2 className="mb-1 text-black">Project Title</h2>
       <Input
         placeholder="Enter your project title"
         onChange={(event) => onHandleInputChange('title', event.target.value)}
@@ -129,9 +129,26 @@ function Topic({ onHandleInputChange }) {
         <p className="text-sm text-gray-600">Select topic for your video</p>
 
         <Tabs defaultValue="suggestion" className="w-full mt-2">
-          <TabsList>
-            <TabsTrigger value="suggestion">Trending keywords</TabsTrigger>
-            <TabsTrigger value="your_topic">Your Topic</TabsTrigger>
+          <TabsList className="flex gap-2 bg-gray-100 p-1 rounded-md shadow-sm">
+            <TabsTrigger
+              value="suggestion"
+              className="px-4 py-3 rounded-md font-medium text-sm transition-all duration-300
+                text-gray-700 bg-white
+                hover:bg-gradient-to-r hover:from-pink-400 hover:to-orange-400 hover:text-white
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+            >
+              🔥 Trending Keywords
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="your_topic"
+              className="px-4 py-3 rounded-md font-medium text-sm transition-all duration-300
+                text-gray-700 bg-white
+                hover:bg-gradient-to-r hover:from-pink-400 hover:to-orange-400 hover:text-white
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+            >
+              ✏️ Your Topic
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="suggestion">
             <div>
@@ -158,11 +175,12 @@ function Topic({ onHandleInputChange }) {
                       onHandleInputChange('topic', suggestion);
                     }
                   }}
-                  className={`m-1 cursor-pointer border-2 transition-all duration-200 hover:bg-gray-50 hover:border-gray-400 ${
-                    suggestion === selectedTopic
-                      ? 'text-yellow-300 text-2xl font-bold'
-                      : 'bg-transparent text-current border-gray-300'
-                  }`}
+                  className={`m-1 cursor-pointer border-2 transition-all duration-200 rounded-lg 
+                    ${
+                      suggestion === selectedTopic
+                        ? 'bg-yellow-300 text-black font-bold shadow-lg'
+                        : 'bg-white text-gray-800 hover:bg-gray-100 hover:text-purple-600 hover:shadow-md'
+                    }`}
                 >
                   {suggestion}
                 </Button>
@@ -171,8 +189,8 @@ function Topic({ onHandleInputChange }) {
           </TabsContent>
           <TabsContent value="your_topic">
             <div>
-              <h2 className="mb-1">Enter your own topic</h2>
-              <Textarea
+              <h2 className="mb-1 text-black">Enter your own topic</h2>
+              <Textarea className = 'text-black'
                 placeholder="Enter your topic"
                 onChange={(event) => {
                   const topic = event.target.value;

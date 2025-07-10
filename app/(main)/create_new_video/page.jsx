@@ -128,7 +128,7 @@ function CreateNewVideo() {
 
   return (
     <div>
-      <h2 className="text-3xl">Create New Video</h2>
+      <h2 className="text-3xl text-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-md">Create New Video</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 mt-8 gap-7">
         <div className="col-span-2 p-7 border rounded-xl h-[72vh] overflow-auto">
           {/* Topic and script */}

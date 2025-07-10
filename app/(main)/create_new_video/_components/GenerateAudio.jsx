@@ -36,7 +36,7 @@ function GenerateAudio({
 
   return (
     <div className="mt-5">
-      <h2 className="text-xl font-semibold mb-2">Tạo Audio</h2>
+      <h2 className="text-black text-xl font-semibold mb-2">Tạo Audio</h2>
       <Textarea
         className="mb-2"
         placeholder="Nhập văn bản muốn chuyển thành giọng nói..."

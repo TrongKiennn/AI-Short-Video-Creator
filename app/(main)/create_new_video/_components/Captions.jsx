@@ -9,7 +9,7 @@ const options = [
   },
   {
     name: "Minimalist",
-    style: "text-white text-3xl font-light tracking-tight px-2 py-1 rounded-lg",
+    style: "text-purple-400 text-3xl font-light tracking-tight px-2 py-1 rounded-lg",
   },
   {
     name: "Bold Red",
@@ -57,14 +57,14 @@ function Captions({ onHandleInputChange }) {
   const [selectedCaptionStyle, setSelectedCaptionStyle] = useState();
   return (
     <div className="mt-5">
-      <h2>Caption Style</h2>
-      <p className="text-sm text-gray-400">Select caption style</p>
+      <h2 className="text-black">Caption Style</h2>
+      <p className="text-sm text-gray-600">Select caption style</p>
 
       <div className="flex flex-wrap gap-4 mt-2">
         {options.map((option, index) => (
           <div
             key={index}
-            className={`p-1 bg-slate-900 hover:border border-gray-300 cursor-pointer rounded-lg ${option.name == selectedCaptionStyle && "border"}`}
+            className={`p-1 bg-white-200 hover:border border-gray-500 cursor-pointer rounded-lg ${option.name == selectedCaptionStyle && "border"}`}
             onClick={() => {
               setSelectedCaptionStyle(option.name);
               onHandleInputChange("caption", option);
