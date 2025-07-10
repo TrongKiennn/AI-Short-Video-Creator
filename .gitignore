@@ -42,5 +42,10 @@ next-env.d.ts
 
 # speech files
 *.wav
+# Generated files
 
+# Auto-generated videos when exporting
 exports/
+
+# Auto-generated convex files
+convex/_generated/
