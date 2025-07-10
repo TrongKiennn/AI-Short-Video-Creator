@@ -4,7 +4,7 @@ import { Loader2Icon, Volume2Icon } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
 
-function GenerateAudio({
+function AudioGenerator({
   formData,
   ttsText,
   setTtsText,
@@ -67,4 +67,4 @@ function GenerateAudio({
   );
 }
 
-export default GenerateAudio;
+export default AudioGenerator;

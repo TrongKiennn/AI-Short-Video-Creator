@@ -5,7 +5,7 @@ import VideoStyle from './_components/VideoStyle';
 import Voice from './_components/Voice';
 import Captions from './_components/Captions';
 import Preview from './_components/Preview';
-import GenerateAudio from './_components/GenerateAudio';
+import AudioGenerator from './_components/AudioGenerator';
 import { Loader2Icon, WandSparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
@@ -181,7 +181,7 @@ function CreateNewVideo() {
 
           <Voice onHandleInputChange={onHandleInputChange} />
 
-          <GenerateAudio
+          <AudioGenerator
             formData={formData}
             ttsText={ttsText}
             setTtsText={setTtsText}
