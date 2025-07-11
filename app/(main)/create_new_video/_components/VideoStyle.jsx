@@ -27,8 +27,8 @@ function VideoStyle({ onHandleInputChange }) {
             className={`relative p-2 rounded-xl transition-all duration-200 cursor-pointer shadow-md backdrop-blur-lg 
               ${
                 option.name === selectedVideoStyle
-                  ? "bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg"
-                  : "bg-white/50 hover:bg-white/70 hover:shadow-lg"
+                  ? "bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg "
+                  : "bg-white/50 hover:bg-white/70 hover:shadow-lg "
               }`}
             key={index}
             onClick={() => {
@@ -46,10 +46,10 @@ function VideoStyle({ onHandleInputChange }) {
               />
             </div>
             <h2
-              className={`absolute bottom-2 left-0 right-0 text-center text-sm font-semibold ${
+              className={`absolute bottom-2 left-0 right-0 text-center text-md font-semibold ${
                 option.name === selectedVideoStyle
-                  ? "text-white"
-                  : "text-gray-800"
+                  ? "text-white text-lg text-bold"
+                  : "text-shadow-white"
               }`}
             >
               {option.name}

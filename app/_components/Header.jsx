@@ -12,7 +12,7 @@ function Header() {
     <div className="p-4 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <Image src={'/logo.svg'} alt="logo" width={40} height={40} />
-        <h2 className="text-2xl font-bold">Video Generator</h2>
+        <h2 className="text-2xl font-bold text-black">Video Generator</h2>
       </div>
 
       <div>
