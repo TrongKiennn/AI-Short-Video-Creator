@@ -38,7 +38,7 @@ function TrackList({ videoData }) {
       });
 
      
-      redirect(`/play-video/${videoData?._id}`);
+      // redirect(`/edit-video/${videoData?._id}`);
     
   };
   
