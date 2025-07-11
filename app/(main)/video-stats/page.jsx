@@ -175,74 +175,68 @@ export default function VideoStatsPage() {
   const neutralComments = sentimentAnalysis.filter(s => s === 'neutral').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 rounded-2xl via-yellow-50 via-blue-100 to-purple-100 rounded-2xl">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            YouTube Video Analytics Pro
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-md mb-4">
+            YouTube Video Analytics
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Phân tích thống kê chuyên nghiệp video YouTube
+          <p className="text-lg text-gray-700">
+            In-depth analysis of your YouTube video.
           </p>
         </div>
 
         {/* Search Form */}
-        <div className="max-w-2xl mx-auto mb-8">
-          <form onSubmit={fetchStats} className="flex gap-4">
+        <div className="max-w-2xl mx-auto mb-10">
+          <form onSubmit={fetchStats} className="flex gap-4 shadow-lg rounded-full p-2 bg-white/50 backdrop-blur-sm">
             <input
               type="text"
-              placeholder="Nhập link hoặc ID video YouTube"
+              placeholder="Enter a YouTube video link or ID..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+              className="flex-1 px-5 py-3 bg-transparent border-none rounded-full focus:ring-0 focus:outline-none text-gray-800 placeholder-gray-500"
             />
             <button 
               type="submit" 
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+              className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-full transition-all duration-300 shadow-md"
+              disabled={loading}
             >
-              Phân tích
+              {loading ? '...' : 'Analystic'}
             </button>
           </form>
         </div>
 
         {loading && (
           <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-gray-600 dark:text-gray-300">Đang tải dữ liệu chi tiết...</p>
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500"></div>
+            <p className="mt-3 text-gray-600">Đang tải dữ liệu chi tiết...</p>
           </div>
         )}
 
         {error && (
-          <div className="max-w-2xl mx-auto mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600">{error}</p>
+          <div className="max-w-2xl mx-auto mb-8 p-4 bg-red-100/80 backdrop-blur-sm border border-red-200 rounded-xl">
+            <p className="text-red-700 font-medium">{error}</p>
           </div>
         )}
 
         {stats && (
           <div className="space-y-8">
             {/* Video Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+            <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden">
               <div className="p-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                   {stats.snippet.title}
                 </h2>
                 
-                {/* Video Player */}
+                {/* Video Player Placeholder */}
                 <div className="relative w-full mb-6">
-                  <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
+                  <div className="aspect-video bg-gray-900/10 rounded-lg overflow-hidden">
                     <img 
                       src={stats.snippet.thumbnails.high?.url || stats.snippet.thumbnails.medium.url} 
                       alt="Video thumbnail" 
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="bg-black bg-opacity-50 rounded-full p-4">
-                        <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                    </div>
                   </div>
                 </div>
 
@@ -275,26 +269,39 @@ export default function VideoStatsPage() {
                 </div>
 
                 {/* Performance Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 rounded-lg">
-                    <div className="text-xl font-bold text-blue-700 dark:text-blue-300">
-                      {calculateEngagementRate(stats.statistics.viewCount, stats.statistics.likeCount, stats.statistics.commentCount)}%
+                {channelData && (
+              <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-lg p-6">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6">
+                  Thông tin Kênh
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center p-4 bg-white/50 dark:bg-white/10 rounded-xl">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {Number(channelData.statistics.subscriberCount).toLocaleString()}
                     </div>
-                    <div className="text-sm text-blue-600 dark:text-blue-400">Tỷ lệ tương tác</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">Subscribers</div>
                   </div>
-                  <div className="text-center p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 rounded-lg">
-                    <div className="text-xl font-bold text-green-700 dark:text-green-300">
-                      {averageDailyViews.toLocaleString()}
+                  <div className="text-center p-4 bg-white/50 dark:bg-white/10 rounded-xl">
+                    <div className="text-2xl font-bold text-green-600">
+                      {Number(channelData.statistics.videoCount).toLocaleString()}
                     </div>
-                    <div className="text-sm text-green-600 dark:text-green-400">Lượt xem/ngày</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">Videos</div>
                   </div>
-                  <div className="text-center p-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900 dark:to-purple-800 rounded-lg">
-                    <div className="text-xl font-bold text-purple-700 dark:text-purple-300">
-                      {daysSincePublished}
+                  <div className="text-center p-4 bg-white/50 dark:bg-white/10 rounded-xl">
+                    <div className="text-2xl font-bold text-yellow-600">
+                      {Number(channelData.statistics.viewCount).toLocaleString()}
                     </div>
-                    <div className="text-sm text-purple-600 dark:text-purple-400">Ngày đã đăng</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">Total Views</div>
+                  </div>
+                  <div className="text-center p-4 bg-white/50 dark:bg-white/10 rounded-xl">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {Math.round(Number(channelData.statistics.viewCount) / Number(channelData.statistics.videoCount)).toLocaleString()}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">Avg Views/Video</div>
                   </div>
                 </div>
+              </div>
+            )}
 
                 {/* Video Details */}
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4">

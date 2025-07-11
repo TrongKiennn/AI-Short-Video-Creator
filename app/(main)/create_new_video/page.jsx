@@ -170,7 +170,7 @@ function NewVideoCreator() {
 
   return (
     <div>
-      <h2 className="text-3xl">Create New Video</h2>
+      <h2 className="text-3xl text-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-md">Create New Video</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 mt-8 gap-7">
         <div className="col-span-2 p-7 border rounded-xl h-[72vh] overflow-auto">
           {/* Topic and script */}
@@ -194,7 +194,8 @@ function NewVideoCreator() {
           {/* Captions */}
           <Captions onHandleInputChange={onHandleInputChange} />
           <Button
-            className="w-full mt-5"
+            className={`w-full mt-5 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+    bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg`}
             disabled={loading}
             onClick={GenerateVideo}
           >

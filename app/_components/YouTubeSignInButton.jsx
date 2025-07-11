@@ -52,10 +52,10 @@ function YouTubeSignInButton() {
     <button
       onClick={connectYouTube}
       disabled={isConnecting}
-      className="flex items-center gap-4 p-3 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex items-center gap-4 p-3 w-full text-left hover:bg-purple-100 rounded transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <Youtube className="w-5 h-5 text-red-600" />
-      <span className="text-sm">
+      <span className="text-sm text-black font-medium">
         {isConnecting ? 'Connecting...' : 'Sign in to YouTube'}
       </span>
     </button>

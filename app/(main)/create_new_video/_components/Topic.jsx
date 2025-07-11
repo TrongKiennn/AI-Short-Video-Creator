@@ -119,19 +119,36 @@ function Topic({ onHandleInputChange }) {
 
   return (
     <div>
-      <h2 className="mb-1">Project Title</h2>
-      <Input
+      <h2 className="mb-1 text-black text-xl font-bold">Project Title</h2>
+      <Input className="shadow-amber-950 text-black"
         placeholder="Enter your project title"
         onChange={(event) => onHandleInputChange('title', event.target.value)}
       />
       <div className="mt-5">
-        <h2>Video Topic</h2>
-        <p className="text-sm text-gray-600">Select topic for your video</p>
+        <h2 className='text-xl font-bold text-black'>Video Topic</h2>
+        <p className="text-sm mb-1 text-gray-500">Select topic for your video</p>
 
         <Tabs defaultValue="suggestion" className="w-full mt-2">
-          <TabsList>
-            <TabsTrigger value="suggestion">Trending topics</TabsTrigger>
-            <TabsTrigger value="your_topic">Your Topic</TabsTrigger>
+          <TabsList className="flex gap-2 bg-gray-100 p-1 rounded-md shadow-sm">
+            <TabsTrigger
+              value="suggestion"
+              className="px-4 py-3 rounded-md font-medium text-sm transition-all duration-300
+                text-gray-700 bg-white
+                hover:bg-gradient-to-r hover:from-pink-400 hover:to-orange-400 hover:text-white
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+            >
+              🔥 Trending Keywords
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="your_topic"
+              className="px-4 py-3 rounded-md font-medium text-sm transition-all duration-300
+                text-gray-700 bg-white
+                hover:bg-gradient-to-r hover:from-pink-400 hover:to-orange-400 hover:text-white
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+            >
+              ✏️ Your Topic
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="suggestion">
             <div>
@@ -158,11 +175,12 @@ function Topic({ onHandleInputChange }) {
                       onHandleInputChange('topic', suggestion);
                     }
                   }}
-                  className={`m-1 cursor-pointer border-2 transition-all duration-200 hover:bg-gray-50 hover:border-gray-400 ${
-                    suggestion === selectedTopic
-                      ? 'text-yellow-300 text-2xl font-bold'
-                      : 'bg-transparent text-current border-gray-300'
-                  }`}
+                  className={`m-1 cursor-pointer border-2 transition-all duration-200 rounded-lg 
+                    ${
+                      suggestion === selectedTopic
+                        ? 'bg-yellow-300 text-black font-bold shadow-lg'
+                        : 'bg-white text-gray-800 hover:bg-gray-100 hover:text-purple-600 hover:shadow-md'
+                    }`}
                 >
                   {suggestion}
                 </Button>
@@ -171,8 +189,8 @@ function Topic({ onHandleInputChange }) {
           </TabsContent>
           <TabsContent value="your_topic">
             <div>
-              <h2 className="mb-1">Enter your own topic</h2>
-              <Textarea
+              <h2 className="mb-1 text-black text-sm">Enter your own topic</h2>
+              <Textarea className = 'text-black shadow-amber-950'
                 placeholder="Enter your topic"
                 onChange={(event) => {
                   const topic = event.target.value;
@@ -185,28 +203,33 @@ function Topic({ onHandleInputChange }) {
         </Tabs>
 
         {scripts?.length > 0 && (
-          <div>
-            <div className="grid grid-cols-2 gap-5">
-              {scripts.map((item, index) => (
-                <div
-                  key={index}
-                  className={`p-3 border rounded-lg mt-3 cursor-pointer
-                  ${selectedScriptIndex == index && 'border-white bg-secondary'}
-                `}
-                  onClick={() => {
-                    onHandleInputChange('script', item.content);
-                    setSelectedScriptIndex(index);
-                  }}
-                >
-                  <h2 className="text-sm text-gray-300">{item.content}</h2>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+  <div>
+    <div className="grid grid-cols-2 gap-5">
+      {scripts.map((item, index) => (
+        <div
+          key={index}
+          className={`p-4 border-2 rounded-xl mt-3 cursor-pointer transition-all duration-300 
+            ${
+              selectedScriptIndex === index
+                ? 'bg-gradient-to-r from-purple-200 to-pink-200 text-black shadow-lg border-transparent'
+                : 'bg-white text-gray-500 hover:bg-gray-100 hover:shadow-md'
+            }`}
+          onClick={() => {
+            onHandleInputChange('script', item.content);
+            setSelectedScriptIndex(index);
+          }}
+        >
+          <h2 className="text-sm font-medium">{item.content}</h2>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
       </div>
       <Button
-        className="mt-3"
+        className={` mt-3 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+    bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg`}
+  
         size="sm"
         onClick={GenerateScript}
         disabled={loading || !selectedTopic}

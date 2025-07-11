@@ -8,7 +8,7 @@ function Preview({ formData }) {
 
   return (
     <div className="relative">
-      <h2 className="mb-3 text-2xl">Preview</h2>
+      <h2 className="mb-3 text-2xl text-black">Preview</h2>
 
       {selectVideoStyle?.image ? (
         <Image

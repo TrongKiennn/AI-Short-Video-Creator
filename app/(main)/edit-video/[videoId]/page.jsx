@@ -36,7 +36,7 @@ function VideoEditor() {
     <div className="grid grid-cols-1 md:grid-cols-4 gap-10 p-2">
       <div className="md:col-span-3">
         <Link href={'/play-video/' +videoData?._id}>
-          <h2 className='flex gap-2 items-center pb-2'>
+          <h2 className='flex gap-2 items-center pb-2 text-black'>
             <ArrowLeft/>
             Back to play video
           </h2>
