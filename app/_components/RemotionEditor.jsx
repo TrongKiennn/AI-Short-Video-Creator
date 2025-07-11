@@ -59,11 +59,30 @@ function RemotionEditor({ videoData, setDurationInFrame, newAudio }) {
     }
   };
 
+  // const finalAudioSrc = useMemo(() => {
+  //   if (newAudio?.file) return URL.createObjectURL(newAudio.file);
+  //   if (audioUrl) return `${audioUrl}?v=${new Date().getTime()}`;
+  //   return null;
+  // }, [newAudio, audioUrl]);
+
+  // useEffect(() => {
+  //   return () => {
+  //     if (finalAudioSrc && newAudio?.file) {
+  //       URL.revokeObjectURL(finalAudioSrc);
+  //     }
+  //   };
+
+    // const finalAudioSrc = useMemo(() => {
+    //   if (newAudio?.file) return URL.createObjectURL(newAudio.file);
+    //   if (audioUrl) return `${audioUrl}?v=${new Date().getTime()}`;
+    //   return null;
+    // }, [newAudio, audioUrl]);
+
   const finalAudioSrc = useMemo(() => {
-    if (newAudio?.file) return URL.createObjectURL(newAudio.file);
-    if (audioUrl) return `${audioUrl}?v=${new Date().getTime()}`;
+    if (newAudio?.url) return newAudio.url;
+    if (videoData?.audioUrl) return `${videoData.audioUrl}?v=${new Date().getTime()}`;
     return null;
-  }, [newAudio, audioUrl]);
+  }, [newAudio, videoData]);
 
   useEffect(() => {
     return () => {

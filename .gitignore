@@ -43,11 +43,12 @@ public
 *.tsbuildinfo
 next-env.d.ts
 
-# speech files
+# generated speech files
 *.wav
 
 # exported videos and temp files
 /public/exports/*.mp4
 /temp/
-*.mp4
 
+# auto-generated convex files
+convex/_generated/

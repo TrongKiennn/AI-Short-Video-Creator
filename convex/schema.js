@@ -40,4 +40,16 @@ export default defineSchema({
   })
     .index('by_user', ['userId'])
     .index('by_email', ['email']),
+  sysparam: defineTable({
+    key: v.string(),
+    value: v.string(),
+    description: v.optional(v.string()),
+    category: v.string(), // 'firebase', 'convex', 'api', 'youtube', 'database'
+    isSecret: v.boolean(), // true for sensitive values
+    isActive: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_key', ['key'])
+    .index('by_category', ['category']),
 });

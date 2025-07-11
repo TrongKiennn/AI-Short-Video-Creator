@@ -44,7 +44,7 @@ Lệnh này sẽ tạo ra một **Admin Key** dùng để đăng nhập hệ th�
 
 Mở lại file `.env.local` và:
 
-- Tìm dòng `ADMIN_KEY=...`
+- Tìm dòng `CONVEX_SELF_HOSTED_ADMIN_KEY=...`
 - Thay thế bằng giá trị key vừa được tạo ở bước trước.
 
 ## 🔐 7. Đăng nhập hệ thống quản trị

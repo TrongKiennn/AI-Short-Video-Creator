@@ -37,22 +37,21 @@ function Audio({ videoData, currentTime, durationInFrames, fps, newAudio, setNew
     audioInputRef.current?.click();
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (previewAudioRef.current && !previewAudioRef.current.paused) {
-        previewAudioRef.current.pause();
-        setIsPreviewing(false);
-      }
-      setNewAudio({ file, name: file.name }); // Use handler from props
+      setIsSaving(true);
+      const formData = new FormData();
+      formData.append('file', file);
 
-      // Create a temporary audio element to get the duration immediately
-      const tempAudio = document.createElement('audio');
-      tempAudio.src = URL.createObjectURL(file);
-      tempAudio.onloadedmetadata = () => {
-        setPreviewProgress({ currentTime: 0, duration: tempAudio.duration });
-        URL.revokeObjectURL(tempAudio.src); // Clean up to prevent memory leaks
-      };
+      // Upload tạm lên Supabase
+      const result = await axios.post("/api/supabase", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      // Lưu cả file và url tạm thời vào state
+      setNewAudio({ file, name: file.name, url: result.data.url });
+      setIsSaving(false);
     }
   };
 
@@ -63,10 +62,13 @@ function Audio({ videoData, currentTime, durationInFrames, fps, newAudio, setNew
       previewAudioRef.current.pause();
       setIsPreviewing(false);
     } else {
-      const source = newAudio // Use prop
-        ? URL.createObjectURL(newAudio.file) 
-        : `${videoData.audioUrl}?v=${new Date().getTime()}`;
-      
+      // Ưu tiên dùng url public nếu có, nếu không thì dùng file local
+      const source = newAudio?.url
+        ? newAudio.url
+        : newAudio?.file
+          ? URL.createObjectURL(newAudio.file)
+          : `${videoData.audioUrl}?v=${new Date().getTime()}`;
+
       previewAudioRef.current.src = source;
       previewAudioRef.current.play().catch(error => console.error("Audio play failed:", error));
       setIsPreviewing(true);
@@ -74,30 +76,17 @@ function Audio({ videoData, currentTime, durationInFrames, fps, newAudio, setNew
   };
 
   const handleSave = async () => {
-    if (!newAudio) return;
+    if (!newAudio?.url) return;
     setIsSaving(true);
     try {
-      const formData = new FormData();
-      formData.append('file', newAudio.file);
-
-      // 1. Upload the new audio file. 
-      // Assuming /api/supabase handles audio uploads and returns a URL.
-      const result = await axios.post("/api/supabase", formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      
-      // 2. Update the database with the new audio URL
+      // Gọi mutation để update audioUrl trong DB
       await updateAudio({
         recordId: videoData._id,
-        audioUrl: result.data.url,
+        audioUrl: newAudio.url,
       });
-      
-      // 3. Reload the page to reflect changes everywhere
       window.location.reload();
-
     } catch (error) {
       console.error("Failed to replace audio:", error);
-      // You might want to add a user-facing error message here
     } finally {
       setIsSaving(false);
     }
@@ -118,10 +107,10 @@ function Audio({ videoData, currentTime, durationInFrames, fps, newAudio, setNew
     return `${minutes}:${seconds}`;
   };
 
+  //const audioFileName = newAudio?.name || videoData.audioUrl.split('/').pop().split('?')[0];
   const audioFileName = newAudio?.name || videoData.audioUrl.split('/').pop().split('?')[0];
-
   return (
-    <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-700 relative group">
+    <div className="mt-4 p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl border border-purple-300 shadow-md relative group transition-all duration-300">
       <div className="flex items-center gap-4">
         <Button
           size="icon"
@@ -133,14 +122,14 @@ function Audio({ videoData, currentTime, durationInFrames, fps, newAudio, setNew
         </Button>
         <div className="flex-grow">
           <div className="flex justify-between items-center mb-1">
-            <p className="text-sm font-medium text-white truncate" title={audioFileName}>
+            <p className="text-sm font-medium text-gray-800 truncate" title={audioFileName}>
               {audioFileName}
             </p>
             <p className="text-xs font-mono text-gray-400">
               {formatTime(displayCurrentTime)} / {formatTime(displayDuration)}
             </p>
           </div>
-          <div className="w-full bg-gray-600 rounded-full h-2">
+          <div className="w-full bg-gray-300 rounded-full h-2">
             <div
               className="bg-purple-500 h-2 rounded-full"
               style={{ width: `${progressPercentage}%` }}

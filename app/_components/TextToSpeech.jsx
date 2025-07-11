@@ -121,7 +121,7 @@ const TextToSpeech = ({ text }) => {
         <label className="text-sm font-medium">Language</label>
         <select
           id="lang-select"
-          className="w-full p-2 text-sm border rounded-md dark:bg-slate-800 bg-white shadow-sm"
+          className="w-full p-2 text-sm border rounded-md text-black bg-white shadow-sm"
           onChange={e => setSelectedLang(e.target.value)}
           value={selectedLang}
         >
@@ -135,7 +135,7 @@ const TextToSpeech = ({ text }) => {
         <label className="text-sm font-medium">Voice</label>
         <select
           id="voice-select"
-          className="w-full p-2 text-sm border rounded-md dark:bg-slate-800 bg-white shadow-sm"
+          className="w-full p-2 text-sm border rounded-md text-black bg-white shadow-sm"
           onChange={e => setSelectedVoice(e.target.value)}
           value={selectedVoice}
           disabled={voices.length === 0}

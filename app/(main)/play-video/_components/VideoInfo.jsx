@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useAuthContext } from '@/app/provider';
+import { toast } from 'react-toastify';
 
 function VideoInfo({ videoData }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -17,7 +18,7 @@ function VideoInfo({ videoData }) {
 
   const handleExportVideo = async () => {
     if (!videoData?.images || !videoData?.audioUrl) {
-      alert('Video data incomplete. Missing images or audio.');
+      toast.error('Video data incomplete. Missing images or audio.');
       return null;
     }
 
@@ -40,12 +41,13 @@ function VideoInfo({ videoData }) {
         });
 
         setUploadStatus('Video exported successfully!');
+        toast.success('🎬 Video exported successfully!');
         return response.data.videoUrl;
       }
     } catch (error) {
       console.error('Export failed:', error);
       setUploadStatus('Export failed');
-      alert(
+      toast.error(
         'Failed to export video: ' +
           (error.response?.data?.error || error.message)
       );
@@ -58,7 +60,7 @@ function VideoInfo({ videoData }) {
   const handleYouTubeUpload = async () => {
     // Check if user is authenticated
     if (!user?.email) {
-      alert('You must be logged in to upload to YouTube.');
+      toast.error('You must be logged in to upload to YouTube.');
       return;
     }
 
@@ -88,8 +90,11 @@ function VideoInfo({ videoData }) {
 
       if (response.data.success) {
         setUploadStatus('Successfully uploaded to YouTube!');
-        alert(
-          `Video uploaded successfully!\nVideo URL: ${response.data.videoUrl}\nStatus: ${response.data.status}`
+        toast.success(
+          `🎉 Video uploaded successfully to YouTube!\nVideo URL: ${response.data.videoUrl}\nStatus: ${response.data.status}`,
+          {
+            autoClose: 8000,
+          }
         );
       }
     } catch (error) {
@@ -127,15 +132,15 @@ function VideoInfo({ videoData }) {
               const { authUrl } = await response.json();
               window.location.href = authUrl;
             } else {
-              alert('Failed to connect to YouTube. Please try again.');
+              toast.error('Failed to connect to YouTube. Please try again.');
             }
           } catch (connectError) {
             console.error('YouTube connection error:', connectError);
-            alert('Failed to connect to YouTube. Please try again.');
+            toast.error('Failed to connect to YouTube. Please try again.');
           }
         }
       } else {
-        alert(`Failed to upload to YouTube: ${errorMessage}`);
+        toast.error(`Failed to upload to YouTube: ${errorMessage}`);
       }
     } finally {
       setIsUploading(false);
@@ -164,20 +169,22 @@ function VideoInfo({ videoData }) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    toast.success('📥 Video download started!');
   };
 
   return (
     <div className="p-5 border rounded-xl">
       <Link href={'/dashboard'}>
-        <h2 className="flex gap-2 items-center">
+        <h2 className="text-black flex gap-2 items-center">
           <ArrowLeft />
           Back to Dashboard
         </h2>
       </Link>
       <div className="flex flex-col gap-3">
-        <h2 className="mt-5">Project Name: {videoData?.title}</h2>
+        <h2 className="mt-5 text-black">Project Name: {videoData?.title}</h2>
         <p className="text-gray-500">Script: {videoData?.script}</p>
-        <h2>Video Style: {videoData?.videoStyle}</h2>
+        <h2 className='text-black'>Video Style: {videoData?.videoStyle}</h2>
 
         {uploadStatus && (
           <p

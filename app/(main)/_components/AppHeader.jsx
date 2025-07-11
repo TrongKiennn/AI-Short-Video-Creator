@@ -3,7 +3,6 @@ import { useAuthContext } from '@/app/provider';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import React from 'react';
 import Image from 'next/image';
-import YouTubeConnectionStatus from '@/app/_components/YouTubeConnectionStatus';
 
 function AppHeader() {
   const { user } = useAuthContext();
@@ -19,7 +18,6 @@ function AppHeader() {
           className="rounded-full"
         />
       </div>
-      <YouTubeConnectionStatus />
     </div>
   );
 }
