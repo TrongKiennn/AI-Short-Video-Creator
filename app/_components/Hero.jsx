@@ -13,7 +13,7 @@ function Hero() {
         edit, and publish engaging shorts with ease!
       </p>
 
-      <div className="mt-7 gap-8 flex w-full">
+      <div className="mt-7 gap-8 flex w-full justify-center">
         <Button
           size="lg"
           variant="secondary"

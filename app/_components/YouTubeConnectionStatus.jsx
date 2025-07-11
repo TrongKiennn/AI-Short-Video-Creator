@@ -22,9 +22,7 @@ function YouTubeConnectionStatus() {
           {youtubeConnected ? 'Ready to upload videos' : 'Not ready to upload'}
         </span>
         {youtubeConnected && user.email && (
-          <span className="text-sm text-green-300 font-bold">
-            ({user.email})
-          </span>
+          <span className="text-sm text-red-600 font-bold">({user.email})</span>
         )}
       </div>
 

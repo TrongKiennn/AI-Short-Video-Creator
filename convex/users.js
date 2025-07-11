@@ -41,3 +41,28 @@ export const getUserByEmail = query({
     return user;
   },
 });
+
+export const updateAutoUploadPreference = mutation({
+  args: {
+    userId: v.id('users'),
+    autoUploadToYoutube: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.userId, {
+      autoUploadToYoutube: args.autoUploadToYoutube,
+    });
+    return true;
+  },
+});
+
+export const getUserPreferences = query({
+  args: {
+    userId: v.id('users'),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.get(args.userId);
+    return {
+      autoUploadToYoutube: user?.autoUploadToYoutube || false,
+    };
+  },
+});

@@ -137,7 +137,8 @@ function TrackList({ videoData }) {
         hidden
       />
 
-      <Button size="sm" className="mt-4 w-full" onClick={handleSave} disabled={isSaving}>
+      <Button size="sm" className="mt-4 w-full px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+    bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed" onClick={handleSave} disabled={isSaving}>
         {isSaving ? (
           <Loader2 className="animate-spin w-4 h-4" />
         ) : (

@@ -7,6 +7,7 @@ export default defineSchema({
     email: v.string(),
     pictureURL: v.string(),
     credits: v.number(),
+    autoUploadToYoutube: v.optional(v.boolean()),
   }),
   videoData: defineTable({
     title: v.string(),
