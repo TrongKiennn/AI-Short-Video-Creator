@@ -41,14 +41,15 @@ const MenuItems = [
     icon: Search
   },
   {
-    title: "Video Performance Statistics",
-    url: "/video-stats",
-    icon: LucideAreaChart
+    title: 'Video Performance Statistics',
+    url: '/video-stats',
+    icon: LucideAreaChart,
   },
-]
+];
 
 function AppSidebar() {
   const pathname = usePathname();
+  const { youtubeConnected } = useAuthContext();
 
   return (
     <Sidebar>
@@ -66,7 +67,7 @@ function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <div className='mx-5 mt-10'>
+            <div className="mx-5 mt-10">
               <Link href={'/create_new_video'}>
                 <Button 
                   className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold shadow-lg hover:from-purple-500 hover:to-pink-500 transition-all"
@@ -107,16 +108,21 @@ function AppSidebar() {
         <div className="text-xs text-gray-400 text-center py-2">
           © {new Date().getFullYear()} Video Gen
         </div>
+        <style jsx global>{`
+          [data-slot="sidebar-wrapper"] {
+            background: linear-gradient(135deg, #f8fafc 0%, #f3e8ff 100%);
+            box-shadow: 2px 0 24px 0 rgba(120, 72, 232, 0.08);
+            border-right: 1px solid #e9d5ff;
+          }
+        `}</style>
+        <div className="p-3 space-y-2">
+          <YouTubeStatusIndicator />
+          <YouTubeSignInButton />
+          <LogoutButton />
+        </div>
       </SidebarFooter>
-      <style jsx global>{`
-        [data-slot="sidebar-wrapper"] {
-          background: linear-gradient(135deg, #f8fafc 0%, #f3e8ff 100%);
-          box-shadow: 2px 0 24px 0 rgba(120, 72, 232, 0.08);
-          border-right: 1px solid #e9d5ff;
-        }
-      `}</style>
     </Sidebar>
-  )
+  );
 }
 
-export default AppSidebar
+export default AppSidebar;

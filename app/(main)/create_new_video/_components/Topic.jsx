@@ -35,7 +35,7 @@ function Topic({ onHandleInputChange }) {
   // Function to normalize text for duplicate comparison (lowercase)
   const normalizeForComparison = (text) => {
     return text
-      .replace(/^[,\-.\s]+|[,\-.\s]+$/g, '') // Remove specific punctuation (comma, hyphen, period, space) from start/end
+      .replace(/^[,\-.\s—)?!]+|[,\-.\s—(]+$/g, '') // Remove specific punctuation (comma, hyphen, period, space) from start/end
       .toUpperCase() // Normalize to uppercase for case-insensitive comparison
       .trim();
   };

@@ -17,6 +17,7 @@ export default defineSchema({
     voice: v.string(),
     images: v.optional(v.any()),
     audioUrl: v.optional(v.string()),
+    videoUrl: v.optional(v.string()), // URL to the exported video file
     captionJSON: v.optional(v.any()),
     uid: v.id('users'),
     createdBy: v.string(),
@@ -28,4 +29,27 @@ export default defineSchema({
     expiresAt: v.number(),
     createdAt: v.number(),
   }).index('by_key', ['cacheKey']),
+  youtubeTokens: defineTable({
+    userId: v.id('users'),
+    email: v.string(),
+    refreshToken: v.string(),
+    accessToken: v.optional(v.string()),
+    expiresAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_user', ['userId'])
+    .index('by_email', ['email']),
+  sysparam: defineTable({
+    key: v.string(),
+    value: v.string(),
+    description: v.optional(v.string()),
+    category: v.string(), // 'firebase', 'convex', 'api', 'youtube', 'database'
+    isSecret: v.boolean(), // true for sensitive values
+    isActive: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_key', ['key'])
+    .index('by_category', ['category']),
 });
