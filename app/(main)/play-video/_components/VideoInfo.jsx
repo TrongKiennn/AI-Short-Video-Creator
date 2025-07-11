@@ -176,15 +176,15 @@ function VideoInfo({ videoData }) {
   return (
     <div className="p-5 border rounded-xl">
       <Link href={'/dashboard'}>
-        <h2 className="flex gap-2 items-center">
+        <h2 className="text-black flex gap-2 items-center">
           <ArrowLeft />
           Back to Dashboard
         </h2>
       </Link>
       <div className="flex flex-col gap-3">
-        <h2 className="mt-5">Project Name: {videoData?.title}</h2>
+        <h2 className="mt-5 text-black">Project Name: {videoData?.title}</h2>
         <p className="text-gray-500">Script: {videoData?.script}</p>
-        <h2>Video Style: {videoData?.videoStyle}</h2>
+        <h2 className='text-black'>Video Style: {videoData?.videoStyle}</h2>
 
         {uploadStatus && (
           <p
@@ -196,29 +196,42 @@ function VideoInfo({ videoData }) {
 
         <div className="flex justify-between items-center mt-3">
           <Link href={`/edit-video/${videoData?._id}`}>
-            <Button>Edit Video</Button>
+            <Button
+            className="mt-4 w-full px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+    bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+  
+            >Edit Video</Button>
           </Link>
 
           <div className="flex gap-2">
-            <Button onClick={handleDownload} disabled={isExporting}>
-              <DownloadIcon />
+            <Button
+            className="mt-4 w-full px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+    bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+   onClick={handleDownload} disabled={isExporting}>
+              <DownloadIcon
+               />
               {isExporting ? 'Exporting...' : 'Export & Download'}
             </Button>
 
+            
+          </div>
+          <div>
             <Button
               onClick={handleYouTubeUpload}
+              
               disabled={isUploading || isExporting}
               variant="outline"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 px-4 mt-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+    bg-gradient-to-r from-blue-300 to-green-300 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Youtube className="w-4 h-4" />
+              <Youtube className="w-4 h-4 " />
               {isUploading
                 ? 'Uploading...'
                 : isExporting
                   ? 'Exporting...'
                   : 'Upload to YouTube'}
             </Button>
-          </div>
+            </div>
         </div>
       </div>
     </div>

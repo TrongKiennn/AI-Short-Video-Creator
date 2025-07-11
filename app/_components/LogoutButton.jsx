@@ -26,10 +26,10 @@ function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="flex items-center gap-4 p-3 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors cursor-pointer"
+      className="flex items-center gap-4 p-3 w-full text-left hover:bg-purple-100 rounded transition-colors cursor-pointer"
     >
       <LogOut className="w-5 h-5" />
-      <span>Log Out</span>
+      <span className='text-black'>Log Out</span>
     </button>
   );
 }
