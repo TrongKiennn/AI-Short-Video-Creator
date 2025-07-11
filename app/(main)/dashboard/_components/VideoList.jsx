@@ -3,7 +3,7 @@ import React, { use, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useConvex } from 'convex/react';
+import { useConvex, useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useAuthContext } from '@/app/provider';
 import moment from 'moment';
@@ -23,7 +23,7 @@ function VideoList() {
       uid: user?._id,
     });
     setVideoList(result);
-    const isPendingVideo = result?.find((item) => item.status == 'pending');
+    const isPendingVideo = result?.find((item) => item.status === 'pending');
     isPendingVideo && GetPendingVideoStatus(isPendingVideo);
   };
 
@@ -35,9 +35,12 @@ function VideoList() {
         videoId: pendingVideo?._id,
       });
 
-      if (result?.status == 'completed') {
+      if (result?.status === 'completed') {
         clearInterval(intervalId);
         console.log('Video Process Completed');
+
+        // Note: Auto-upload is now handled by useVideoStatusPolling hook to prevent duplicates
+
         GetUserVideoList();
       }
       console.log('Still Pending');
@@ -60,7 +63,7 @@ function VideoList() {
           {videoList?.map((video, index) => (
             <Link key={index} href={'play-video/' + video?._id}>
               <div className="relative">
-                {video.status == 'complete' ? (
+                {video.status === 'completed' ? (
                   <Image
                     src={video?.images[0]}
                     alt={video?.title}

@@ -9,8 +9,19 @@ import path from 'path';
 
 export async function POST(request) {
   try {
-    const { videoPath, title, description, tags, userEmail } =
-      await request.json();
+    // Safely parse JSON with error handling
+    let requestBody;
+    try {
+      requestBody = await request.json();
+    } catch (jsonError) {
+      console.error('Invalid JSON in request body:', jsonError);
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+
+    const { videoPath, title, description, tags, userEmail } = requestBody;
 
     console.log('Starting YouTube upload process');
 
@@ -95,7 +106,7 @@ export async function POST(request) {
           defaultAudioLanguage: 'en',
         },
         status: {
-          privacyStatus: 'private', // Start with private for safety
+          privacyStatus: 'public', // Make videos public by default
           selfDeclaredMadeForKids: false,
         },
       },

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import VideoList from './_components/VideoList';
 import YouTubeConnectionStatus from '@/app/_components/YouTubeConnectionStatus';
+import YouTubeAutoUploadToggle from '@/app/_components/YouTubeAutoUploadToggle';
 
 function Dashboard() {
   const [statusMessage, setStatusMessage] = useState(null);
@@ -69,6 +70,11 @@ function Dashboard() {
         )}
 
         <YouTubeConnectionStatus />
+        
+        {/* Auto Upload Toggle */}
+        <div className="mt-4">
+          <YouTubeAutoUploadToggle />
+        </div>
       </div>
       <VideoList />
     </div>

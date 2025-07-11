@@ -5,7 +5,19 @@ import fs from 'fs';
 
 export async function POST(request) {
   try {
-    const { videoId, audioUrl, images, title } = await request.json();
+    // Safely parse JSON with error handling
+    let requestBody;
+    try {
+      requestBody = await request.json();
+    } catch (jsonError) {
+      console.error('Invalid JSON in request body:', jsonError);
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+
+    const { videoId, audioUrl, images, title } = requestBody;
 
     console.log('Starting video export for:', videoId);
 

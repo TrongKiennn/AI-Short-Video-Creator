@@ -3,7 +3,19 @@ import { getAuthUrl } from '@/configs/youtubeConfig';
 
 export async function POST(request) {
   try {
-    const { userId, email, displayName } = await request.json();
+    // Safely parse JSON with error handling
+    let requestBody;
+    try {
+      requestBody = await request.json();
+    } catch (jsonError) {
+      console.error('Invalid JSON in request body:', jsonError);
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+
+    const { userId, email, displayName } = requestBody;
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
