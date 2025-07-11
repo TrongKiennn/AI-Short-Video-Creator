@@ -194,7 +194,8 @@ function NewVideoCreator() {
           {/* Captions */}
           <Captions onHandleInputChange={onHandleInputChange} />
           <Button
-            className="w-full mt-5"
+            className={`w-full mt-5 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+    bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg`}
             disabled={loading}
             onClick={GenerateVideo}
           >

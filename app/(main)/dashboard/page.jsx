@@ -44,10 +44,8 @@ function Dashboard() {
 
   return (
     <div>
-      <h2 className='font-bold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-md'>My Video</h2>
-      <VideoList/>
+      <h2 className='font-bold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-md mb-4'>My Video</h2>
       <div className="mb-6">
-        <h2 className="font-bold text-3xl mb-4">My Video</h2>
 
         {/* Status message display */}
         {statusMessage && (

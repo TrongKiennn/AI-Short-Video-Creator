@@ -18,6 +18,10 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from '@/components/ui/button'
 import { HomeIcon, LucideAreaChart, LucideAudioLines, LucideFileVideo, Search } from 'lucide-react'
+import YouTubeSignInButton from '@/app/_components/YouTubeSignInButton';
+import YouTubeStatusIndicator from '@/app/_components/YouTubeStatusIndicator';
+import { useAuthContext } from '@/app/provider';
+import LogoutButton from '@/app/_components/LogoutButton';
 
 const MenuItems = [
   {

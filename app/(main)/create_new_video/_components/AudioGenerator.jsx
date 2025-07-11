@@ -38,15 +38,18 @@ function AudioGenerator({
 
   return (
     <div className="mt-5">
-      <h2 className="text-black text-xl font-semibold mb-2">Tạo Audio</h2>
+      <h2 className="text-black text-xl font-bold mb-2">Create Audio</h2>
       <Textarea
-        className="mb-2"
+        className="mb-4 shadow-amber-950 text-black"
         placeholder="Enter the text you want to convert to speech..."
         value={ttsText}
         onChange={(e) => setTtsText(e.target.value)}
         rows={3}
       />
       <Button
+      className={` mt-5 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+    bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg`}
+
         onClick={handleGenerateAudio}
         disabled={ttsIsLoading || !formData?.script || !formData?.voice}
       >

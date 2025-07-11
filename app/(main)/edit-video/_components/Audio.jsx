@@ -110,7 +110,7 @@ function Audio({ videoData, currentTime, durationInFrames, fps, newAudio, setNew
   //const audioFileName = newAudio?.name || videoData.audioUrl.split('/').pop().split('?')[0];
   const audioFileName = newAudio?.name || videoData.audioUrl.split('/').pop().split('?')[0];
   return (
-    <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-700 relative group">
+    <div className="mt-4 p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl border border-purple-300 shadow-md relative group transition-all duration-300">
       <div className="flex items-center gap-4">
         <Button
           size="icon"
@@ -122,14 +122,14 @@ function Audio({ videoData, currentTime, durationInFrames, fps, newAudio, setNew
         </Button>
         <div className="flex-grow">
           <div className="flex justify-between items-center mb-1">
-            <p className="text-sm font-medium text-white truncate" title={audioFileName}>
+            <p className="text-sm font-medium text-gray-800 truncate" title={audioFileName}>
               {audioFileName}
             </p>
             <p className="text-xs font-mono text-gray-400">
               {formatTime(displayCurrentTime)} / {formatTime(displayDuration)}
             </p>
           </div>
-          <div className="w-full bg-gray-600 rounded-full h-2">
+          <div className="w-full bg-gray-300 rounded-full h-2">
             <div
               className="bg-purple-500 h-2 rounded-full"
               style={{ width: `${progressPercentage}%` }}

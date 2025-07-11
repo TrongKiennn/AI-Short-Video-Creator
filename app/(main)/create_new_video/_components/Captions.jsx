@@ -57,7 +57,7 @@ function Captions({ onHandleInputChange }) {
   const [selectedCaptionStyle, setSelectedCaptionStyle] = useState();
   return (
     <div className="mt-5">
-      <h2 className="text-black">Caption Style</h2>
+      <h2 className="text-black text-xl font-bold">Caption Style</h2>
       <p className="text-sm text-gray-600">Select caption style</p>
 
       <div className="flex flex-wrap gap-4 mt-2">

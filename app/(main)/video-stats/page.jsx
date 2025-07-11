@@ -183,7 +183,7 @@ export default function VideoStatsPage() {
             YouTube Video Analytics
           </h1>
           <p className="text-lg text-gray-700">
-            Phân tích chuyên sâu video YouTube của bạn
+            In-depth analysis of your YouTube video.
           </p>
         </div>
 
@@ -192,7 +192,7 @@ export default function VideoStatsPage() {
           <form onSubmit={fetchStats} className="flex gap-4 shadow-lg rounded-full p-2 bg-white/50 backdrop-blur-sm">
             <input
               type="text"
-              placeholder="Nhập link hoặc ID video YouTube..."
+              placeholder="Enter a YouTube video link or ID..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               className="flex-1 px-5 py-3 bg-transparent border-none rounded-full focus:ring-0 focus:outline-none text-gray-800 placeholder-gray-500"
@@ -202,7 +202,7 @@ export default function VideoStatsPage() {
               className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-full transition-all duration-300 shadow-md"
               disabled={loading}
             >
-              {loading ? '...' : 'Phân tích'}
+              {loading ? '...' : 'Analystic'}
             </button>
           </form>
         </div>
