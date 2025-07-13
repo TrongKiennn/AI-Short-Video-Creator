@@ -37,8 +37,8 @@ function TrackList({ videoData }) {
         images: newImageList,
       });
 
-     
-      redirect(`/play-video/${videoData?._id}`);
+      setIsSaving(false)
+      // redirect(`/edit-video/${videoData?._id}`);
     
   };
   

@@ -31,14 +31,51 @@ function formatDuration(duration) {
 
 // Helper function to calculate engagement rate
 function calculateEngagementRate(views, likes, comments) {
-  const totalEngagement = Number(likes) + Number(comments);
-  return ((totalEngagement / Number(views)) * 100).toFixed(2);
+  const v = Number(views);
+  const l = Number(likes) || 0;
+  const c = Number(comments) || 0;
+
+  if (!v || isNaN(v)) return 0;
+
+  const totalEngagement = l + c;
+  const rate = (totalEngagement / v) * 100;
+
+  return isNaN(rate) ? 0 : rate.toFixed(2);
 }
 
 // Helper function to calculate view-to-like ratio
 function calculateViewToLikeRatio(views, likes) {
-  return (Number(views) / Number(likes)).toFixed(1);
+  const v = Number(views) || 0; // Đảm bảo views là số, mặc định là 0 nếu không hợp lệ
+  const l = Number(likes) || 0; // Đảm bảo likes là số, mặc định là 0 nếu không hợp lệ
+
+  console.log(v,l);
+
+  // Nếu không có lượt thích hoặc lượt xem, trả về "0.0"
+  if (l === 0 || v === 0) return "0.0";
+
+  const ratio = v / l;
+  return isNaN(ratio) || !isFinite(ratio) ? "0.0" : ratio.toFixed(1);
 }
+
+function calculateLikeRatio(likes, views) {
+  const likeNum = Number(likes);
+  const viewNum = Number(views);
+
+  if (!viewNum || isNaN(viewNum) || isNaN(likeNum)) return '0.00';
+  const ratio = (likeNum / viewNum) * 100;
+  return isNaN(ratio) ? '0' : ratio.toFixed(2);
+}
+
+function calculateCommentRatio(comments, views) {
+  const commentNum = Number(comments);
+  const viewNum = Number(views);
+
+  if (!viewNum || isNaN(viewNum) || isNaN(commentNum)) return '0.00';
+  const ratio = (commentNum / viewNum) * 100;
+  return isNaN(ratio) ? '0' : ratio.toFixed(2);
+}
+
+
 
 // Helper function to calculate days since published
 function calculateDaysSincePublished(publishedAt) {
@@ -497,7 +534,7 @@ export default function VideoStatsPage() {
                       <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                         <div className="text-sm font-medium text-green-600 dark:text-green-400">Tỷ lệ like</div>
                         <div className="text-2xl font-bold text-green-700 dark:text-green-300">
-                          {((Number(stats.statistics.likeCount) / Number(stats.statistics.viewCount)) * 100).toFixed(2)}%
+                          {calculateLikeRatio(stats.statistics.likeCount, stats.statistics.viewCount)}%
                         </div>
                         <div className="text-xs text-green-500 dark:text-green-400">Likes / Views</div>
                       </div>
@@ -505,7 +542,7 @@ export default function VideoStatsPage() {
                       <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                         <div className="text-sm font-medium text-yellow-600 dark:text-yellow-400">Tỷ lệ comment</div>
                         <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
-                          {((Number(stats.statistics.commentCount) / Number(stats.statistics.viewCount)) * 100).toFixed(2)}%
+                          {calculateCommentRatio(stats.statistics.commentCount, stats.statistics.viewCount)}%
                         </div>
                         <div className="text-xs text-yellow-500 dark:text-yellow-400">Comments / Views</div>
                       </div>
