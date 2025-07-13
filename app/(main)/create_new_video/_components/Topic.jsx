@@ -31,6 +31,7 @@ function Topic({ onHandleInputChange }) {
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState(originalSuggestions);
   const [loadingTopics, setLoadingTopics] = useState(false);
+  const [writingStyle, setWritingStyle] = useState('');
 
   // Function to normalize text for duplicate comparison (lowercase)
   const normalizeForComparison = (text) => {
@@ -104,6 +105,7 @@ function Topic({ onHandleInputChange }) {
     try {
       const result = await axios.post('/api/generate_script', {
         topic: selectedTopic,
+        writingStyle: writingStyle.trim(),
       });
       setScript(result.data?.scripts);
     } catch (e) {
@@ -230,6 +232,24 @@ function Topic({ onHandleInputChange }) {
           </div>
         )}
       </div>
+
+      {/* Writing Style Input */}
+      <div className="mt-4">
+        <h2 className="mb-2 text-black text-sm font-medium">
+          Writing Style (Optional)
+        </h2>
+        <p className="text-xs mb-2 text-gray-500">
+          Customize the writing style for your script (e.g., "conversational",
+          "professional", "humorous", "dramatic")
+        </p>
+        <Input
+          className="shadow-amber-950 text-black"
+          placeholder="Enter writing style (optional)"
+          value={writingStyle}
+          onChange={(event) => setWritingStyle(event.target.value)}
+        />
+      </div>
+
       <Button
         className={` mt-3 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
     bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg`}

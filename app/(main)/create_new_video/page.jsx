@@ -195,10 +195,6 @@ function NewVideoCreator() {
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
             )}
           </div>
-          <div className="text-xs text-blue-600 mt-1">
-            Video ID: {lastVideoId} | Images:{' '}
-            {pollingVideoData?.images?.length || 0}
-          </div>
         </div>
       )}
 

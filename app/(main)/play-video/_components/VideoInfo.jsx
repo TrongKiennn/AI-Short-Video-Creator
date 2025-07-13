@@ -7,6 +7,7 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useAuthContext } from '@/app/provider';
 import { toast } from 'react-toastify';
+import YouTubeSuccessToast from '@/components/YouTubeSuccessToast';
 
 function VideoInfo({ videoData }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -93,9 +94,15 @@ function VideoInfo({ videoData }) {
       if (response.data.success) {
         setUploadStatus('Successfully uploaded to YouTube!');
         toast.success(
-          `🎉 Video uploaded successfully to YouTube!\n📺 Title: ${videoData.title}\n🔗 URL: ${response.data.videoUrl}\n📊 Status: Public`,
+          <YouTubeSuccessToast 
+            title={videoData.title || 'AI Generated Video'}
+            videoUrl={response.data.videoUrl}
+            isAutoUpload={false}
+          />,
           {
-            autoClose: 10000,
+            autoClose: 15000,
+            closeOnClick: false,
+            draggable: true,
           }
         );
       }
