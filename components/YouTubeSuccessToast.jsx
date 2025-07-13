@@ -39,22 +39,22 @@ const YouTubeSuccessToast = ({ title, videoUrl, isAutoUpload = false }) => {
           {isAutoUpload ? 'Auto-uploaded to YouTube!' : 'Uploaded to YouTube!'}
         </span>
       </div>
-      
+
       <div className="space-y-3">
         <div className="text-sm">
           <span className="font-medium">Title:</span> {title}
         </div>
-        
+
         <div className="space-y-2">
           <div className="text-sm">
             <span className="font-medium">Video URL:</span>
           </div>
-          
+
           <div className="bg-gray-100 rounded-md p-2">
             <div className="text-sm font-mono text-gray-700 mb-2 break-all">
               {videoUrl}
             </div>
-            
+
             <div className="flex gap-2 justify-start">
               <button
                 onClick={handleCopy}
@@ -77,7 +77,7 @@ const YouTubeSuccessToast = ({ title, videoUrl, isAutoUpload = false }) => {
                   </>
                 )}
               </button>
-              
+
               <button
                 onClick={handleOpenVideo}
                 className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium bg-red-500 hover:bg-red-600 text-white transition-all duration-200"

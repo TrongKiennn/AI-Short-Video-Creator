@@ -86,15 +86,17 @@ function VideoInfo({ videoData }) {
           'Short Video',
           'Automated Content',
           'AI Creator',
-          'Video Generation'
-        ].filter(Boolean).slice(0, 10), // YouTube allows max 10 tags
+          'Video Generation',
+        ]
+          .filter(Boolean)
+          .slice(0, 10), // YouTube allows max 10 tags
         userEmail: user.email,
       });
 
       if (response.data.success) {
         setUploadStatus('Successfully uploaded to YouTube!');
         toast.success(
-          <YouTubeSuccessToast 
+          <YouTubeSuccessToast
             title={videoData.title || 'AI Generated Video'}
             videoUrl={response.data.videoUrl}
             isAutoUpload={false}
@@ -178,7 +180,7 @@ function VideoInfo({ videoData }) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     toast.success('📥 Video download started!');
   };
 
@@ -193,7 +195,7 @@ function VideoInfo({ videoData }) {
       <div className="flex flex-col gap-3">
         <h2 className="mt-5 text-black">Project Name: {videoData?.title}</h2>
         <p className="text-gray-500">Script: {videoData?.script}</p>
-        <h2 className='text-black'>Video Style: {videoData?.videoStyle}</h2>
+        <h2 className="text-black">Video Style: {videoData?.videoStyle}</h2>
 
         {uploadStatus && (
           <p
@@ -206,28 +208,27 @@ function VideoInfo({ videoData }) {
         <div className="flex justify-between items-center mt-3">
           <Link href={`/edit-video/${videoData?._id}`}>
             <Button
-            className="mt-4 w-full px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+              className="mt-4 w-full px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
     bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-  
-            >Edit Video</Button>
+            >
+              Edit Video
+            </Button>
           </Link>
 
           <div className="flex gap-2">
             <Button
-            className="mt-4 w-full px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
+              className="mt-4 w-full px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
     bg-gradient-to-r from-purple-500 to-pink-500 shadow-md hover:from-purple-600 hover:to-pink-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-   onClick={handleDownload} disabled={isExporting}>
-              <DownloadIcon
-               />
+              onClick={handleDownload}
+              disabled={isExporting}
+            >
+              <DownloadIcon />
               {isExporting ? 'Exporting...' : 'Export & Download'}
             </Button>
-
-            
           </div>
           <div>
             <Button
               onClick={handleYouTubeUpload}
-              
               disabled={isUploading || isExporting}
               variant="outline"
               className="flex items-center gap-2 px-4 mt-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 
@@ -240,7 +241,7 @@ function VideoInfo({ videoData }) {
                   ? 'Exporting...'
                   : 'Upload to YouTube'}
             </Button>
-            </div>
+          </div>
         </div>
       </div>
     </div>
