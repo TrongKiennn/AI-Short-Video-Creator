@@ -37,7 +37,7 @@ function TrackList({ videoData }) {
         images: newImageList,
       });
 
-     
+      setIsSaving(false)
       // redirect(`/edit-video/${videoData?._id}`);
     
   };
