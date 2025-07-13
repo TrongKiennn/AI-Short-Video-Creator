@@ -76,24 +76,26 @@ function VideoInfo({ videoData }) {
     try {
       const response = await axios.post('/api/youtube/upload', {
         videoPath: videoUrl,
-        title: videoData.title,
-        description: `${videoData.script}\n\nGenerated with AI Video Creator\n\nTopic: ${videoData.topic}\nVideo Style: ${videoData.videoStyle}`,
+        title: videoData.title || 'AI Generated Video',
+        description: `${videoData.script || 'AI Generated Video'}\n\n🎬 Generated with AI Video Creator\n\n📝 Topic: ${videoData.topic || 'General'}\n🎨 Video Style: ${videoData.videoStyle || 'Default'}\n\n#AIGenerated #ShortVideo #AutomatedContent #${(videoData.topic || 'general').replace(/\s+/g, '')}`,
         tags: [
-          videoData.topic,
-          videoData.videoStyle,
+          videoData.topic || 'AI Generated',
+          videoData.videoStyle || 'Short Video',
           'AI Generated',
           'Short Video',
           'Automated Content',
-        ],
+          'AI Creator',
+          'Video Generation'
+        ].filter(Boolean).slice(0, 10), // YouTube allows max 10 tags
         userEmail: user.email,
       });
 
       if (response.data.success) {
         setUploadStatus('Successfully uploaded to YouTube!');
         toast.success(
-          `🎉 Video uploaded successfully to YouTube!\nVideo URL: ${response.data.videoUrl}\nStatus: ${response.data.status}`,
+          `🎉 Video uploaded successfully to YouTube!\n📺 Title: ${videoData.title}\n🔗 URL: ${response.data.videoUrl}\n📊 Status: Public`,
           {
-            autoClose: 8000,
+            autoClose: 10000,
           }
         );
       }

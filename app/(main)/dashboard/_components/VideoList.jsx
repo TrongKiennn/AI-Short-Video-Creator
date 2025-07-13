@@ -23,28 +23,7 @@ function VideoList() {
       uid: user?._id,
     });
     setVideoList(result);
-    const isPendingVideo = result?.find((item) => item.status === 'pending');
-    isPendingVideo && GetPendingVideoStatus(isPendingVideo);
-  };
-
-  const GetPendingVideoStatus = (pendingVideo) => {
-    const intervalId = setInterval(async () => {
-      //Get Video Data By Id
-
-      const result = await convex.query(api.videoData.GetVideoById, {
-        videoId: pendingVideo?._id,
-      });
-
-      if (result?.status == 'complete') {
-        clearInterval(intervalId);
-        console.log('Video Process Completed');
-
-        // Note: Auto-upload is now handled by useVideoStatusPolling hook to prevent duplicates
-
-        GetUserVideoList();
-      }
-      console.log('Still Pending');
-    }, 5000);
+    // Legacy polling removed - useVideoStatusPolling hook handles completion detection
   };
   return (
     <div>

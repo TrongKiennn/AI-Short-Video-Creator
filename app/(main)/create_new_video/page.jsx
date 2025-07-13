@@ -27,17 +27,33 @@ function NewVideoCreator() {
   const [mergedVideoUrl, setMergedVideoUrl] = useState(null);
   const [lastVideoId, setLastVideoId] = useState(null);
 
-  // Add polling hook
-  useVideoStatusPolling(lastVideoId, (completedVideo) => {
-    toast.success('🎉 Your video is ready!', {
-      position: 'top-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-  });
+  // Add polling hook and get video data for debugging
+  const pollingVideoData = useVideoStatusPolling(
+    lastVideoId,
+    (completedVideo) => {
+      console.log('🎉 Video completion callback triggered:', completedVideo);
+      toast.success('🎉 Your video is ready!', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  );
+
+  // Debug: Log the current status
+  useEffect(() => {
+    if (lastVideoId && pollingVideoData) {
+      console.log('📊 Current video status:', {
+        videoId: lastVideoId,
+        status: pollingVideoData.status,
+        hasImages: !!pollingVideoData.images,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }, [lastVideoId, pollingVideoData]);
 
   console.log('User ne', user);
 
@@ -67,14 +83,10 @@ function NewVideoCreator() {
 
     setLoading(true);
 
-    // Show initial loading toast
-    toast.info('🎬 Your video is being created...', {
+    // Show initial processing toast
+    toast.info('🎬 Processing your video in the background...', {
       position: 'top-right',
-      autoClose: false, // Don't auto close this one
-      closeOnClick: false,
-      draggable: false,
-      hideProgressBar: false,
-      toastId: 'video-creation', // Unique ID to control this toast
+      autoClose: 5000,
     });
 
     try {
@@ -90,7 +102,8 @@ function NewVideoCreator() {
         createdBy: user?.email,
       });
 
-      setLastVideoId(resp); // Lưu lại id video vừa tạo để merge sau
+      setLastVideoId(resp); // Save video ID for polling
+      console.log('📝 Created video with ID:', resp, 'Starting polling...');
       setTtsText(formData.script);
 
       const result = await axios.post('/api/generate_video_data', {
@@ -99,14 +112,8 @@ function NewVideoCreator() {
         audioUrl: ttsAudioUrl,
       });
 
-      // Dismiss the loading toast and show processing toast
-      toast.dismiss('video-creation');
-      toast.info('⚙️ Processing your video in the background...', {
-        position: 'top-right',
-        autoClose: 5000,
-      });
+      console.log('✅ Video generation started successfully');
     } catch (error) {
-      toast.dismiss('video-creation');
       toast.error('Failed to start video generation. Please try again.', {
         position: 'top-right',
         autoClose: 5000,
@@ -170,7 +177,31 @@ function NewVideoCreator() {
 
   return (
     <div>
-      <h2 className="text-3xl text-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-md">Create New Video</h2>
+      <h2 className="text-3xl text-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-md">
+        Create New Video
+      </h2>
+
+      {/* Debug status indicator */}
+      {lastVideoId && (
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center gap-2">
+            <div className="text-sm font-medium text-blue-800">
+              Video Status: {pollingVideoData?.status || 'loading...'}
+            </div>
+            {pollingVideoData?.status === 'pending' && (
+              <div className="animate-pulse w-2 h-2 bg-blue-500 rounded-full"></div>
+            )}
+            {pollingVideoData?.status === 'complete' && (
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            )}
+          </div>
+          <div className="text-xs text-blue-600 mt-1">
+            Video ID: {lastVideoId} | Images:{' '}
+            {pollingVideoData?.images?.length || 0}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 mt-8 gap-7">
         <div className="col-span-2 p-7 border rounded-xl h-[72vh] overflow-auto">
           {/* Topic and script */}

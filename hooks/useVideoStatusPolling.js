@@ -1,11 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useAuthContext } from '@/app/provider';
 import { autoExportAndUploadToYouTube } from '@/lib/autoUpload';
+import { toast } from 'react-toastify';
 
 export const useVideoStatusPolling = (videoId, onComplete) => {
   const { user } = useAuthContext();
+  
+  // Use reactive query for real-time updates
   const videoData = useQuery(
     api.videoData.GetVideoById,
     videoId ? { videoId } : 'skip'
@@ -21,7 +24,17 @@ export const useVideoStatusPolling = (videoId, onComplete) => {
   const updateVideoUrl = useMutation(api.videoData.UpdateVideoUrl);
 
   const hasCompletedRef = useRef(false);
+  const hasTriggeredAutoUploadRef = useRef(false);
 
+  // Stable callback to avoid re-creating on every render
+  const handleComplete = useCallback((video) => {
+    if (onComplete) {
+      console.log('🎬 Video completed! Triggering completion callback:', video._id);
+      onComplete(video);
+    }
+  }, [onComplete]);
+
+  // Single unified completion handler
   useEffect(() => {
     if (
       videoData &&
@@ -29,35 +42,38 @@ export const useVideoStatusPolling = (videoId, onComplete) => {
       !hasCompletedRef.current
     ) {
       hasCompletedRef.current = true;
+      console.log('✅ Video completed!', videoData._id);
 
-      // Call the original onComplete callback
-      onComplete?.(videoData);
+      // Show completion toast
+      handleComplete(videoData);
 
-      // Check if auto-upload is enabled and trigger it with 20-second delay
-      if (userPreferences?.autoUploadToYoutube && user?.email) {
-        console.log(
-          'Auto-upload enabled, scheduling auto-upload for video:',
-          videoData._id,
-          'in 20 seconds'
+      // Handle auto-upload if enabled and not already triggered
+      if (
+        userPreferences?.autoUploadToYoutube && 
+        user?.email && 
+        !hasTriggeredAutoUploadRef.current
+      ) {
+        hasTriggeredAutoUploadRef.current = true;
+        console.log('🚀 Auto-upload enabled, starting process for video:', videoData._id);
+        
+        // Start auto-upload immediately
+        autoExportAndUploadToYouTube(videoData, user, updateVideoUrl).catch(
+          (error) => {
+            console.error('Auto-upload failed:', error);
+            // Reset flag on failure so user can manually retry
+            hasTriggeredAutoUploadRef.current = false;
+          }
         );
-
-        // Wait 20 seconds before triggering auto-upload
-        setTimeout(() => {
-          console.log('Starting auto-upload for video:', videoData._id);
-          autoExportAndUploadToYouTube(videoData, user, updateVideoUrl).catch(
-            (error) => {
-              console.error('Auto-upload failed:', error);
-            }
-          );
-        }, 20000); // 20 seconds delay
       }
     }
-  }, [videoData, onComplete, userPreferences, user, updateVideoUrl]);
+  }, [videoData, handleComplete, userPreferences, user, updateVideoUrl]);
 
+  // Reset completion flags when videoId changes
   useEffect(() => {
-    // Reset when videoId changes
     if (videoId) {
+      console.log('🔄 Starting polling for new video:', videoId);
       hasCompletedRef.current = false;
+      hasTriggeredAutoUploadRef.current = false;
     }
   }, [videoId]);
 
