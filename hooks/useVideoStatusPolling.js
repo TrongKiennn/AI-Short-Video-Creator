@@ -25,7 +25,7 @@ export const useVideoStatusPolling = (videoId, onComplete) => {
   useEffect(() => {
     if (
       videoData &&
-      videoData.status === 'completed' &&
+      videoData.status === 'complete' &&
       !hasCompletedRef.current
     ) {
       hasCompletedRef.current = true;

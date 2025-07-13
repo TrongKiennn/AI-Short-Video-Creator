@@ -40,7 +40,7 @@ export const UpdateVideoRecord = mutation({
     const result = await ctx.db.patch(args.recordId, {
       // audioUrl:args.audioUrl,
       images: args.images,
-      status: 'completed',
+      status: 'complete',
     });
 
     return result;

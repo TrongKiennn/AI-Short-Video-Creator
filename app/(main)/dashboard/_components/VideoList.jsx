@@ -35,7 +35,7 @@ function VideoList() {
         videoId: pendingVideo?._id,
       });
 
-      if (result?.status === 'completed') {
+      if (result?.status == 'complete') {
         clearInterval(intervalId);
         console.log('Video Process Completed');
 
@@ -63,7 +63,7 @@ function VideoList() {
           {videoList?.map((video, index) => (
             <Link key={index} href={'play-video/' + video?._id}>
               <div className="relative">
-                {video.status === 'completed' ? (
+                {video.status === 'complete' ? (
                   <Image
                     src={video?.images[0]}
                     alt={video?.title}

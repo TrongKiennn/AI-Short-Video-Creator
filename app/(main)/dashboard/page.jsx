@@ -45,9 +45,10 @@ function Dashboard() {
 
   return (
     <div>
-      <h2 className='font-bold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-md mb-4'>My Video</h2>
+      <h2 className="font-bold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-md mb-4">
+        My Video
+      </h2>
       <div className="mb-6">
-
         {/* Status message display */}
         {statusMessage && (
           <div
@@ -70,7 +71,7 @@ function Dashboard() {
         )}
 
         <YouTubeConnectionStatus />
-        
+
         {/* Auto Upload Toggle */}
         <div className="mt-4">
           <YouTubeAutoUploadToggle />
